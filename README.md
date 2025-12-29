@@ -1,71 +1,57 @@
-# 🛒 Plateforme E-commerce Montres
+# 🛒 Plateforme E-commerce Montres 
 
-Mini-projet de conception d'une plateforme e-commerce spécialisée dans la vente de montres de luxe et casual.
+## 📊 Base de données - watch_store
 
-## 📊 Base de données - watch_store (Version simple actuelle)
+### Choix du schéma 
+- **Une seule table `users`** avec colonne `role ENUM('user', 'admin')` → respect strict de l'énoncé ("une table users" + "gestion des rôles").
+- Table `items` → produits (montres).
+- Table `cart` → panier.
+- **Bonus avancés** :
+  - Système complet de commandes (`commandes` + `commande_items`).
+  - Gestion stock (`stock_quantity` dans items).
+  - Multi-images (img1, img2, img3) pour meilleure UX montres.
+  - Vue `vue_commandes_completes` pour admin.
 
-### Structure actuelle (4 tables - respect strict de l'énoncé)
-- **clients** : Comptes des utilisateurs clients
-- **admins** : Comptes des administrateurs (séparé pour sécurité renforcée)
-- **produits** : Catalogue des montres avec **3 images par produit** (img1, img2, img3)
-- **panier** : Gestion du panier d'achat par client
+### 🗄️ Schéma des tables principales
 
-> Si le professeur autorise des tables supplémentaires → nous passerons à une version avancée avec :
-> - Table `commandes` et `commande_items`
-> - Champs spécifiques montres (brand, movement_type, stock_quantity, etc.)
+#### users (clients + admins)
+| Champ     | Type                  | Description                       |
+|-----------|-----------------------|-----------------------------------|
+| id        | INT PK AI            | Identifiant                       |
+| name      | VARCHAR(100) UNIQUE  | Username                          |
+| password  | VARCHAR(255)         | À hasher en PHP !                 |
+| role      | ENUM('user','admin') | Rôle (gestion des accès)          |
+| email     | VARCHAR(150) UNIQUE  | Email                             |
+| phone     | VARCHAR(20)          | Téléphone (clients)               |
+| address   | TEXT                 | Adresse livraison (clients)       |
 
-### 🗄️ Schéma des tables
+#### items (montres)
+| Champ           | Type              | Description                          |
+|-----------------|-------------------|--------------------------------------|
+| id              | INT PK AI        | Identifiant                          |
+| name            | VARCHAR(200)     | Nom de la montre                     |
+| description     | TEXT             | Description                          |
+| prix            | DECIMAL(10,2)    | Prix en DZD                          |
+| img1 / img2 / img3 | VARCHAR(255)  | 3 images par montre (face, bracelet, détail) |
+| categorie       | VARCHAR(100)     | Luxury, Sport, Dress, Casual, Smart  |
+| stock_quantity  | INT              | Stock disponible                     |
 
-#### clients
-| Champ     | Type              | Description                  |
-|-----------|-------------------|------------------------------|
-| id        | INT PK AI        | Identifiant unique           |
-| name      | VARCHAR(100)     | Nom d'utilisateur (unique)   |
-| password  | VARCHAR(255)     | Mot de passe (à hasher !)    |
+#### cart
+| Champ      | Type              | Description                          |
+|------------|-------------------|--------------------------------------|
+| user_id    | INT FK           | Référence users.id                   |
+| item_id    | INT FK           | Référence items.id                   |
+| quantite   | INT              | Quantité                             |
+| prix       | DECIMAL(10,2)    | Prix au moment de l'ajout            |
+| img        | VARCHAR(255)     | Image principale                     |
 
-#### admins
-| Champ     | Type              | Description                  |
-|-----------|-------------------|------------------------------|
-| id        | INT PK AI        | Identifiant unique           |
-| name      | VARCHAR(100)     | Nom d'utilisateur (unique)   |
-| password  | VARCHAR(255)     | Mot de passe (à hasher !)    |
+#### commandes & commande_items
+Système complet pour finaliser les achats (status, livraison, détails).
 
-#### produits
-| Champ       | Type              | Description                          |
-|-------------|-------------------|--------------------------------------|
-| id          | INT PK AI        | Identifiant unique                   |
-| name        | VARCHAR(200)     | Nom de la montre                     |
-| description | TEXT             | Description détaillée                |
-| prix        | DECIMAL(10,2)    | Prix en DZD                          |
-| img1        | VARCHAR(255)     | Image principale (face)              |
-| img2        | VARCHAR(255)     | Image secondaire (bracelet/dos)      |
-| img3        | VARCHAR(255)     | Image détail (cadran/mouvement)       |
-| categorie   | VARCHAR(100)     | Luxury, Sport, Dress, Casual, Smart  |
-
-#### panier
-| Champ       | Type              | Description                          |
-|-------------|-------------------|--------------------------------------|
-| id          | INT PK AI        | Identifiant                          |
-| client_id   | INT FK           | Référence clients.id                 |
-| produit_id  | INT FK           | Référence produits.id                |
-| quantite    | INT              | Quantité dans le panier              |
-| prix        | DECIMAL(10,2)    | Prix au moment de l'ajout            |
-| img         | VARCHAR(255)     | Image principale pour affichage      |
-
-### 🚀 Comment installer la BDD
-1. Ouvrir phpMyAdmin
-2. Créer une nouvelle base `watch_store`
-3. Aller dans l'onglet **Importer**
-4. Sélectionner le fichier : `database/watch_store_simple.sql`
-5. Cliquer sur **Exécuter**
-
-→ Tout est créé + 10 montres de test avec images !
-
-### 🔐 Comptes de test
-- Admin : `admin` / `admin123` → accès DashboardAdmin.php
-- Client : `client_test` / `client123` → accès boutique et panier
+### 🔐 Comptes test
+- **Admin** : `admin` / `admin123` → accès admin
+- **Clients** : `client_test` / `client123` et `alice_dz` / `alice123`
 
 ### 📸 Images
-Toutes les images sont dans le dossier `/imgs/`  
-Nomme-les comme dans la BDD :  
-`rolex_submariner.jpg`, `rolex_submariner_2.jpg`, `rolex_submariner_3.jpg`, etc.
+Dossier `/imgs/` → mets les photos comme `rolex_submariner.jpg`, `_2.jpg`, `_3.jpg` etc.
+
