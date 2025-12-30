@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestion de Stock - Kelthouma Tech Store</title>
+  <title>Gestion de Stock - Watch Store</title>
   <link rel="stylesheet" href="../global.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     .admin-container {
       min-height: 100vh;
@@ -133,6 +134,11 @@
       border-color: var(--ring);
     }
 
+    .form-group small {
+      color: var(--muted-foreground);
+      font-size: 0.75rem;
+    }
+
     .submit-btn {
       margin-top: 1rem;
       padding: 0.875rem 2rem;
@@ -185,7 +191,7 @@
   <header class="admin-header">
     <div class="admin-header-content">
       <div class="admin-logo">
-        <h2>Kelthouma <span>|| Tech Store</span></h2>
+        <h2>Watch Store <span>|| Admin</span></h2>
       </div>
       <nav class="admin-nav">
         <ul>
@@ -203,23 +209,24 @@
       
       <form action="GstockBack.php" method="post" enctype="multipart/form-data" class="form-grid">
         <div class="form-group">
-          <label for="nom">Nom du produit</label>
-          <input type="text" id="nom" name="nom" placeholder="Entrez le nom du produit" required>
+          <label for="nom">Nom de la montre</label>
+          <input type="text" id="nom" name="nom" placeholder="Ex: Rolex Submariner" required>
         </div>
 
         <div class="form-group">
           <label for="description">Description</label>
-          <textarea id="description" name="description" placeholder="Décrivez le produit" required></textarea>
+          <textarea id="description" name="description" placeholder="Décrivez la montre (mouvement, matériaux, etc.)" required></textarea>
         </div>
 
         <div class="form-group">
           <label for="categorie">Catégorie</label>
           <select id="categorie" name="categorie" required>
             <option value="">Sélectionnez une catégorie</option>
-            <option value="Pc">PC</option>
-            <option value="Souris">Souris</option>
-            <option value="Claviers">Claviers</option>
-            <option value="Casques">Casques</option>
+            <option value="Luxury">Montres de Luxe</option>
+            <option value="Sport">Montres Sport</option>
+            <option value="Dress">Montres Habillées</option>
+            <option value="Casual">Montres Casual</option>
+            <option value="Smart">Montres Connectées</option>
           </select>
         </div>
 
@@ -229,32 +236,25 @@
         </div>
 
         <div class="form-group">
-          <label for="img1">Image 1 (Principale)</label>
-    <input type="file" id="img1" name="img1" accept="image/*" required>
-          <small style="color: var(--muted-foreground); font-size: 0.75rem;">
-            Formats acceptés: JPG, PNG, GIF
-          </small>
-        </div>
-        <div class="form-group">
-          <label for="img1">Image 1 (Principale)</label>
- <label for="img2">Image 2</label>
-    <input type="file" id="img2" name="img2" accept="image/*">
-            Formats acceptés: JPG, PNG, GIF
-          </small>
+          <label for="img1">Image 1 (Principale) *</label>
+          <input type="file" id="img1" name="img1" accept="image/*" required>
+          <small>Formats acceptés: JPG, PNG, GIF - Obligatoire</small>
         </div>
 
-        </div>
         <div class="form-group">
-          <label for="img1">Image 1 (Principale)</label>
- <label for="img3">Image 3</label>
-    <input type="file" id="img3" name="img3" accept="image/*">
-            Formats acceptés: JPG, PNG, GIF
-          </small>
+          <label for="img2">Image 2 (Optionnelle)</label>
+          <input type="file" id="img2" name="img2" accept="image/*">
+          <small>Formats acceptés: JPG, PNG, GIF</small>
         </div>
 
+        <div class="form-group">
+          <label for="img3">Image 3 (Optionnelle)</label>
+          <input type="file" id="img3" name="img3" accept="image/*">
+          <small>Formats acceptés: JPG, PNG, GIF</small>
+        </div>
 
         <button type="submit" name="ajouter" class="submit-btn">
-          <i class="fas fa-plus"></i> Ajouter le produit
+          <i class="fas fa-plus"></i> Ajouter la montre
         </button>
       </form>
 
