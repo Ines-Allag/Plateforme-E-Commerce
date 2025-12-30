@@ -18,7 +18,7 @@ if (isset($_POST['produit_id'])) {
     }
 
     // Supprimer le produit du panier dans la base de données
-    $delete_query = "DELETE FROM panier WHERE client_id = $user_id AND produit_id = $produit_id";
+    $delete_query = "DELETE FROM panier WHERE utilisateur_id = $user_id AND produit_id = $produit_id";
     mysqli_query($con, $delete_query);
 
     // Redirection vers la page du panier

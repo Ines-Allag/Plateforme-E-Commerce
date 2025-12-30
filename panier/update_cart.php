@@ -18,7 +18,7 @@ if (isset($_POST['quantite']) && isset($_POST['produit_id'])) {
     // Vérifier que la quantité est supérieure à 0
     if ($quantite > 0) {
         // Mise à jour de la quantité dans la table panier
-        $stmt = $con->prepare("UPDATE panier SET quantite = ? WHERE client_id = ? AND produit_id = ?");
+        $stmt = $con->prepare("UPDATE panier SET quantite = ? WHERE utilisateur_id = ? AND produit_id = ?");
         $stmt->bind_param("iii", $quantite, $user_id, $produit_id);
         $stmt->execute();
 
@@ -27,12 +27,12 @@ if (isset($_POST['quantite']) && isset($_POST['produit_id'])) {
         exit();
     } else {
         // Redirection avec un message d'erreur si la quantité est invalide
-        header("Location: panier.php?error=Quantité invalide");
+        header("Location: view_cart.php?error=Quantité invalide");
         exit();
     }
 } else {
     // Redirection avec un message d'erreur si des paramètres sont manquants
-    header("Location: panier.php?error=Paramètres manquants");
+    header("Location: view_cart.php?error=Paramètres manquants");
     exit();
 }
 ?>

@@ -9,12 +9,18 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id'];
 
+// Récupérer les informations de l'utilisateur
+$stmt_user = $con->prepare("SELECT nom_utilisateur, email, telephone, adresse FROM utilisateurs WHERE id = ?");
+$stmt_user->bind_param("i", $user_id);
+$stmt_user->execute();
+$user_info = $stmt_user->get_result()->fetch_assoc();
+
 $stmt = $con->prepare("
-    SELECT c.quantite, c.prix, c.produit_id, c.img, p.name, 
+    SELECT c.quantite, c.prix, c.produit_id, c.image, p.nom, 
            (c.quantite * c.prix) as total 
     FROM panier c 
     JOIN produits p ON c.produit_id = p.id 
-    WHERE c.client_id = ?
+    WHERE c.utilisateur_id = ?
 ");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -36,9 +42,17 @@ $result = $stmt->get_result();
             padding: 0 1rem;
         }
 
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
         .cart-header {
-            text-align: center;
-            margin-bottom: 3rem;
+            flex: 1;
         }
 
         .cart-header h1 {
@@ -51,6 +65,25 @@ $result = $stmt->get_result();
         .cart-header p {
             color: var(--muted-foreground);
             font-size: 1.125rem;
+        }
+
+        .orders-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .orders-link:hover {
+            background-color: color-mix(in srgb, var(--primary) 90%, black);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
         }
 
         .cart-items {
@@ -132,19 +165,6 @@ $result = $stmt->get_result();
             text-align: center;
         }
 
-        .update-btn {
-            padding: 0.5rem 1rem;
-            background-color: var(--secondary);
-            color: var(--secondary-foreground);
-            border-radius: var(--radius);
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-        }
-
-        .update-btn:hover {
-            background-color: color-mix(in srgb, var(--secondary) 90%, black);
-        }
-
         .item-total {
             font-weight: 600;
             color: var(--foreground);
@@ -157,6 +177,8 @@ $result = $stmt->get_result();
             border-radius: var(--radius);
             font-size: 0.875rem;
             transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
         }
 
         .remove-btn:hover {
@@ -203,9 +225,10 @@ $result = $stmt->get_result();
 
         .cart-actions {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             gap: 1rem;
             margin-top: 2rem;
+            flex-wrap: wrap;
         }
 
         .continue-shopping {
@@ -228,6 +251,8 @@ $result = $stmt->get_result();
             border-radius: var(--radius);
             font-weight: 500;
             transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
         }
 
         .checkout-btn:hover {
@@ -342,7 +367,64 @@ $result = $stmt->get_result();
             margin-top: 1rem;
         }
 
+        /* Animation de suppression */
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+        }
+
+        .removing {
+            animation: fadeOut 0.3s ease;
+        }
+
+        /* Message de notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 2000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.error {
+            background-color: var(--destructive);
+            color: var(--destructive-foreground);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
         @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .orders-link {
+                width: 100%;
+                justify-content: center;
+            }
+
             .cart-item-header,
             .cart-item {
                 grid-template-columns: 1fr;
@@ -367,10 +449,18 @@ $result = $stmt->get_result();
     </style>
 </head>
 <body>
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
     <div class="cart-container">
-        <div class="cart-header">
-            <h1>Mon Panier</h1>
-            <p>Gérez vos articles</p>
+        <div class="page-header">
+            <div class="cart-header">
+                <h1>Mon Panier</h1>
+                <p>Gérez vos articles</p>
+            </div>
+            <a href="mes_commandes.php" class="orders-link">
+                <i class="fas fa-truck"></i> Mes commandes
+            </a>
         </div>
 
         <?php 
@@ -392,31 +482,35 @@ $result = $stmt->get_result();
                     $grand_total += $row['total'];
                     $items_count++;
                 ?>
-                    <div class="cart-item">
+                    <div class="cart-item" data-product-id="<?php echo $row['produit_id']; ?>">
                         <div class="product-info">
                             <div class="product-image">
-                                <img src="<?php echo htmlspecialchars($row['img']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>">
+                                <img src="<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['nom']); ?>">
                             </div>
                             <div class="product-details">
-                                <h3><?php echo htmlspecialchars($row['name']); ?></h3>
+                                <h3><?php echo htmlspecialchars($row['nom']); ?></h3>
                                 <div class="product-price"><?php echo number_format($row['prix'], 2); ?> DZD</div>
                             </div>
                         </div>
                         <div class="product-price"><?php echo number_format($row['prix'], 2); ?> DZD</div>
                         <div class="quantity-control">
-                            <form action="update_cart.php" method="POST" class="update-form">
-                                <input type="hidden" name="produit_id" value="<?php echo $row['produit_id']; ?>">
-                                <input type="number" name="quantite" value="<?php echo $row['quantite']; ?>" min="1" class="quantity-input" onchange="this.form.submit()">
-                            </form>
+                            <input type="number" 
+                                   class="quantity-input" 
+                                   value="<?php echo $row['quantite']; ?>" 
+                                   min="1" 
+                                   data-product-id="<?php echo $row['produit_id']; ?>"
+                                   data-price="<?php echo $row['prix']; ?>"
+                                   onchange="updateQuantity(this)">
                         </div>
-                        <div class="item-total"><?php echo number_format($row['total'], 2); ?> DZD</div>
+                        <div class="item-total" data-product-id="<?php echo $row['produit_id']; ?>">
+                            <?php echo number_format($row['total'], 2); ?> DZD
+                        </div>
                         <div>
-                            <form action="remove_from_cart.php" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?');">
-                                <input type="hidden" name="produit_id" value="<?php echo $row['produit_id']; ?>">
-                                <button type="submit" class="remove-btn">
-                                    <i class="fas fa-trash"></i> Supprimer
-                                </button>
-                            </form>
+                            <button type="button" 
+                                    class="remove-btn" 
+                                    onclick="removeItem(<?php echo $row['produit_id']; ?>)">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
                         </div>
                     </div>
                 <?php endwhile; ?>
@@ -425,7 +519,7 @@ $result = $stmt->get_result();
             <div class="cart-summary">
                 <div class="summary-row">
                     <span class="summary-label">Sous-total</span>
-                    <span class="summary-value"><?php echo number_format($grand_total, 2); ?> DZD</span>
+                    <span class="summary-value" id="subtotal"><?php echo number_format($grand_total, 2); ?> DZD</span>
                 </div>
                 <div class="summary-row">
                     <span class="summary-label">Livraison</span>
@@ -433,7 +527,7 @@ $result = $stmt->get_result();
                 </div>
                 <div class="summary-row grand-total">
                     <span class="summary-label">Total</span>
-                    <span class="summary-value"><?php echo number_format($grand_total, 2); ?> DZD</span>
+                    <span class="summary-value" id="grandtotal"><?php echo number_format($grand_total, 2); ?> DZD</span>
                 </div>
 
                 <div class="cart-actions">
@@ -447,11 +541,11 @@ $result = $stmt->get_result();
             </div>
 
         <?php else: ?>
-            <div class="empty-cart">
+            <div class="empty-cart" id="emptyCart">
                 <i class="fas fa-shopping-cart"></i>
                 <h2>Votre panier est vide</h2>
                 <p>Ajoutez des articles à votre panier pour continuer.</p>
-                <a href="../index1.php" class="btn btn-primary" style="margin-top: 1rem;">
+                <a href="../index1.php" class="checkout-btn" style="margin-top: 1rem; display: inline-block; text-decoration: none;">
                     <i class="fas fa-shopping-bag"></i> Parcourir les produits
                 </a>
             </div>
@@ -468,16 +562,16 @@ $result = $stmt->get_result();
             <div class="modal-body">
                 <form id="orderForm" action="submit_form.php" method="POST">
                     <div class="form-group">
-                        <label for="name">Nom complet</label>
-                        <input type="text" id="name" name="name" required>
+                        <label for="email">Email (optionnel)</label>
+                        <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user_info['email'] ?? ''); ?>">
                     </div>
                     <div class="form-group">
                         <label for="address">Adresse de livraison</label>
-                        <input type="text" id="address" name="address" required>
+                        <input type="text" id="address" name="address" value="<?php echo htmlspecialchars($user_info['adresse'] ?? ''); ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="phone">Numéro de téléphone</label>
-                        <input type="tel" id="phone" name="phone" required>
+                        <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($user_info['telephone'] ?? ''); ?>" required>
                     </div>
                     <div class="modal-actions">
                         <button type="button" class="continue-shopping" onclick="closeModal()">Annuler</button>
@@ -489,6 +583,102 @@ $result = $stmt->get_result();
     </div>
 
     <script>
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification' + (isError ? ' error' : '');
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        function updateQuantity(input) {
+            const productId = input.dataset.productId;
+            const quantity = parseInt(input.value);
+            const price = parseFloat(input.dataset.price);
+
+            if (quantity < 1) {
+                input.value = 1;
+                showNotification('La quantité doit être au moins 1', true);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('produit_id', productId);
+            formData.append('quantite', quantity);
+
+            fetch('update_cart.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                const itemTotal = quantity * price;
+                const itemTotalElement = document.querySelector(`.item-total[data-product-id="${productId}"]`);
+                if (itemTotalElement) {
+                    itemTotalElement.textContent = itemTotal.toFixed(2) + ' DZD';
+                }
+
+                updateGrandTotal();
+                showNotification('Quantité mise à jour');
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showNotification('Erreur lors de la mise à jour', true);
+            });
+        }
+
+        function removeItem(productId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
+                return;
+            }
+
+            const cartItem = document.querySelector(`.cart-item[data-product-id="${productId}"]`);
+            cartItem.classList.add('removing');
+
+            const formData = new FormData();
+            formData.append('produit_id', productId);
+
+            fetch('remove_from_cart.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                setTimeout(() => {
+                    cartItem.remove();
+                    
+                    const remainingItems = document.querySelectorAll('.cart-item');
+                    if (remainingItems.length === 0) {
+                        window.location.reload();
+                    } else {
+                        updateGrandTotal();
+                    }
+                    
+                    showNotification('Article supprimé du panier');
+                }, 300);
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                cartItem.classList.remove('removing');
+                showNotification('Erreur lors de la suppression', true);
+            });
+        }
+
+        function updateGrandTotal() {
+            let total = 0;
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                const quantity = parseInt(input.value);
+                const price = parseFloat(input.dataset.price);
+                total += quantity * price;
+            });
+
+            document.getElementById('subtotal').textContent = total.toFixed(2) + ' DZD';
+            document.getElementById('grandtotal').textContent = total.toFixed(2) + ' DZD';
+        }
+
         function openModal() {
             document.getElementById('checkoutModal').style.display = 'flex';
         }
@@ -497,7 +687,6 @@ $result = $stmt->get_result();
             document.getElementById('checkoutModal').style.display = 'none';
         }
 
-        // Close modal when clicking outside
         document.getElementById('checkoutModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeModal();

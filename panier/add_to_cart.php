@@ -22,29 +22,29 @@ if (isset($_POST['produit_id']) && isset($_POST['quantite']) && isset($_POST['pr
     }
 
     // Récupérer l'image correspondante depuis la table `produits`
-    $query_image = "SELECT img FROM produits WHERE id = $produit_id";
+    $query_image = "SELECT image1 FROM produits WHERE id = $produit_id";
     $result_image = mysqli_query($con, $query_image);
 
     if ($row_image = mysqli_fetch_assoc($result_image)) {
-        $img = $row_image['img'];
+        $img = $row_image['image1'];
     } else {
         header("Location: ../index1.php?error=Produit introuvable.");
         exit();
     }
 
     // Ajouter ou mettre à jour le produit dans la table `panier`
-    $check_query = "SELECT * FROM panier WHERE client_id = $user_id AND produit_id = $produit_id";
+    $check_query = "SELECT * FROM panier WHERE utilisateur_id = $user_id AND produit_id = $produit_id";
     $result = mysqli_query($con, $check_query);
 
     if (mysqli_num_rows($result) > 0) {
         // Si le produit existe déjà dans le panier, mettre à jour la quantité
         $update_query = "UPDATE panier 
                          SET quantite = quantite + $quantite 
-                         WHERE client_id = $user_id AND produit_id = $produit_id";
+                         WHERE utilisateur_id = $user_id AND produit_id = $produit_id";
         mysqli_query($con, $update_query);
     } else {
         // Insérer un nouveau produit dans le panier avec l'image
-        $insert_query = "INSERT INTO panier (client_id, produit_id, quantite, prix, img) 
+        $insert_query = "INSERT INTO panier (utilisateur_id, produit_id, quantite, prix, image) 
                          VALUES ($user_id, $produit_id, $quantite, $prix, '$img')";
         mysqli_query($con, $insert_query);
     }
