@@ -18,21 +18,27 @@ if (isset($_POST['uname']) && isset($_POST['password'])) {
         header("Location: index.php?error=Le mot de passe est requis");
         exit();
     } else {
-        // Mise à jour pour la nouvelle table 'utilisateurs'
-        // Note: Idéalement, utilisez des requêtes préparées pour la sécurité
-        $sql = "SELECT * FROM utilisateurs WHERE nom_utilisateur='$uname' AND mot_de_passe='$pass'";
-        $result = mysqli_query($con, $sql);
+        $sql = "SELECT * FROM utilisateurs WHERE nom_utilisateur=?";
+        $stmt = mysqli_prepare($con, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $uname);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
 
         if (mysqli_num_rows($result) === 1) {
             $row = mysqli_fetch_assoc($result);
 
-            if ($row['nom_utilisateur'] === $uname && $row['mot_de_passe'] === $pass) {
-                $_SESSION['name'] = $row['nom_utilisateur']; 
+            if (password_verify($pass, $row['mot_de_passe'])) {
+                $_SESSION['nom_utilisateur'] = $row['nom_utilisateur'];
                 $_SESSION['id'] = $row['id'];
-                $_SESSION['role'] = $row['role']; // Ajout du rôle (admin ou client)
-                
-                header("Location: ../index1.php");
-                exit();
+                $_SESSION['role'] = $row['role'];
+
+                if ($row['role'] === 'client') {
+                    header("Location: ../index1.php");
+                    exit();
+                } else {
+                    header("Location: index.php?error=Rôle incorrect");
+                    exit();
+                }
             } else {
                 header("Location: index.php?error=Identifiants incorrects");
                 exit();

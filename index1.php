@@ -134,11 +134,15 @@
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
           <a href="Admin/DashboardAdmin.php">Administration</a>
         <?php endif; ?>
-        <?php if (isset($_SESSION['nom_utilisateur'])): ?>
-          <a href="logout.php">Déconnexion (<?= htmlspecialchars($_SESSION['nom_utilisateur']) ?>)</a>
-        <?php else: ?>
-          <a href="Client/index.php">Connexion</a>
-        <?php endif; ?>
+       <?php if (isset($_SESSION['nom_utilisateur'])): ?>
+    <?php if ($_SESSION['role'] === 'admin'): ?>
+        <a href="Admin/logout.php">Déconnexion (<?= htmlspecialchars($_SESSION['nom_utilisateur']) ?>)</a>
+    <?php else: ?>
+        <a href="Client/logout.php">Déconnexion (<?= htmlspecialchars($_SESSION['nom_utilisateur']) ?>)</a>
+    <?php endif; ?>
+<?php else: ?>
+    <a href="Client/index.php">Connexion</a>
+<?php endif; ?>
       </nav>
     </div>
   </header>
@@ -198,8 +202,7 @@
   </main>
 
   <!-- Footer (tu gardes ton footer existant ici) -->
-
-  <script>
+<script>
     function filterProducts() {
       const category = document.getElementById("categorie").value;
       const searchTerm = document.getElementById("searchBar").value.trim();
@@ -217,6 +220,12 @@
         })
         .catch(error => console.error('Erreur de filtrage:', error));
     }
-  </script>
+
+    document.getElementById("searchBar").addEventListener("keyup", function(event) {
+        if (event.key === "Enter") {
+            filterProducts();
+        }
+    });
+</script>
 </body>
 </html>

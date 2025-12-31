@@ -18,20 +18,29 @@ if (isset($_POST['uname']) && isset($_POST['password'])) {
         header("Location: index.php?error=Le mot de passe est requis");
         exit();
     } else {
-        // CHANGEMENT: Table 'utilisateurs' avec filtre role='admin'
-        $sql = "SELECT * FROM utilisateurs WHERE nom_utilisateur='$uname' AND mot_de_passe='$pass' AND role='admin'";
-        $result = mysqli_query($con, $sql);
+        // Requête sécurisée
+        $sql = "SELECT * FROM utilisateurs WHERE nom_utilisateur=?";
+        $stmt = mysqli_prepare($con, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $uname);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
 
         if (mysqli_num_rows($result) === 1) {
             $row = mysqli_fetch_assoc($result);
 
-            // CHANGEMENT: Utiliser 'nom_utilisateur' et 'mot_de_passe'
-            if ($row['nom_utilisateur'] === $uname && $row['mot_de_passe'] === $pass) {
-                $_SESSION['name'] = $row['nom_utilisateur']; 
+            // VÉRIFICATION DU HASH
+            if (password_verify($pass, $row['mot_de_passe'])) {
+                $_SESSION['nom_utilisateur'] = $row['nom_utilisateur'];
                 $_SESSION['id'] = $row['id'];
-                $_SESSION['role'] = 'admin'; // NOUVEAU: Stocker le rôle
-                header("Location: DashboardAdmin.php");
-                exit();
+                $_SESSION['role'] = $row['role'];
+
+                if ($row['role'] === 'admin') {
+                    header("Location: DashboardAdmin.php");
+                    exit();
+                } else {
+                    header("Location: index.php?error=Rôle incorrect");
+                    exit();
+                }
             } else {
                 header("Location: index.php?error=Identifiants incorrects");
                 exit();
@@ -41,7 +50,6 @@ if (isset($_POST['uname']) && isset($_POST['password'])) {
             exit();
         }
     }
-
 } else {
     header("Location: index.php");
     exit();

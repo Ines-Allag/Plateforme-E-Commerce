@@ -1,8 +1,8 @@
 <?php 
 session_start(); 
-include "../config.php";
+include "../config.php"; 
 
-if (isset($_POST['uname']) && isset($_POST['password']) && isset($_POST['name']) && isset($_POST['re_password'])) {
+if (isset($_POST['uname']) && isset($_POST['password']) && isset($_POST['re_password'])) {
 
     function validate($data) {
         return htmlspecialchars(stripslashes(trim($data)));
@@ -11,11 +11,9 @@ if (isset($_POST['uname']) && isset($_POST['password']) && isset($_POST['name'])
     $uname = validate($_POST['uname']);
     $pass = validate($_POST['password']);
     $re_pass = validate($_POST['re_password']);
-    $name = validate($_POST['name']);
 
-    $user_data = 'uname=' . urlencode($uname) . '&name=' . urlencode($name);
+    $user_data = 'uname=' . urlencode($uname);
 
-    // Vérifications des champs obligatoires
     if (empty($uname)) {
         header("Location: signup.php?error=Le nom d'utilisateur est requis&$user_data");
         exit();
@@ -25,23 +23,23 @@ if (isset($_POST['uname']) && isset($_POST['password']) && isset($_POST['name'])
     } else if (empty($re_pass)) {
         header("Location: signup.php?error=La confirmation est requise&$user_data");
         exit();
-    } else if (empty($name)) {
-        header("Location: signup.php?error=Le nom est requis&$user_data");
-        exit();
     } else if ($pass !== $re_pass) {
         header("Location: signup.php?error=Les mots de passe ne correspondent pas&$user_data");
         exit();
     } else {
-        // CHANGEMENT: Vérifier dans 'utilisateurs' avec 'nom_utilisateur'
-        $sql = "SELECT * FROM utilisateurs WHERE nom_utilisateur='$uname' AND role='admin'";
+        // Vérifier si le nom d'utilisateur existe déjà
+        $sql = "SELECT * FROM utilisateurs WHERE nom_utilisateur='$uname'";
         $result = mysqli_query($con, $sql);
 
         if (mysqli_num_rows($result) > 0) {
             header("Location: signup.php?error=Ce nom d'utilisateur est déjà pris&$user_data");
             exit();
         } else {
-            // CHANGEMENT: Insérer dans 'utilisateurs' avec role='admin'
-            $sql2 = "INSERT INTO utilisateurs(nom_utilisateur, mot_de_passe, role) VALUES('$uname', '$pass', 'admin')";
+            // HACHAGE DU MOT DE PASSE
+            $hashed_password = password_hash($pass, PASSWORD_DEFAULT);
+
+            // Insertion avec rôle 'admin'
+            $sql2 = "INSERT INTO utilisateurs(nom_utilisateur, mot_de_passe, role) VALUES('$uname', '$hashed_password', 'admin')";
             $result2 = mysqli_query($con, $sql2);
 
             if ($result2) {

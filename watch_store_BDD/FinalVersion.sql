@@ -8,6 +8,7 @@ CREATE DATABASE watch_store
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 USE watch_store;
+
 -- ========================================
 -- Table 1: utilisateurs (clients + admins)
 -- ========================================
@@ -24,6 +25,7 @@ CREATE TABLE utilisateurs (
     INDEX idx_role (role),
     INDEX idx_nom (nom_utilisateur)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ========================================
 -- Table 2: produits (montres)
 -- ========================================
@@ -45,6 +47,7 @@ CREATE TABLE produits (
     INDEX idx_categorie (categorie),
     INDEX idx_prix (prix)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ========================================
 -- Table 3: panier
 -- ========================================
@@ -61,6 +64,7 @@ CREATE TABLE panier (
     FOREIGN KEY (produit_id) REFERENCES produits(id) ON DELETE CASCADE,
     UNIQUE KEY panier_unique (utilisateur_id, produit_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ========================================
 -- Table 4: commandes
 -- ========================================
@@ -85,6 +89,7 @@ CREATE TABLE commandes (
     INDEX idx_utilisateur (utilisateur_id),
     INDEX idx_date (date_creation)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ========================================
 -- Table 5: details_commande
 -- ========================================
@@ -101,17 +106,11 @@ CREATE TABLE details_commande (
    
     INDEX idx_commande (commande_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ========================================
 -- DONNÉES DE TEST
 -- ========================================
--- Admin (role='admin')
-INSERT INTO utilisateurs (nom_utilisateur, mot_de_passe, role, email) VALUES
-('admin', 'admin123', 'admin', 'admin@watchstore.com');
--- Clients (role='client')
-INSERT INTO utilisateurs (nom_utilisateur, mot_de_passe, role, email, telephone, adresse) VALUES
-('client_test', 'client123', 'client', 'client@test.com', '+213555123456', '15 Rue Didouche Mourad, Alger'),
-('alice_dz', 'alice123', 'client', 'alice@test.com', '+213666789012', '8 Rue Larbi Ben Mhidi, Oran');
--- Montres avec 3 images chacune
+-- Montres avec 3 images chacune (aucun changement)
 INSERT INTO produits (nom, description, prix, image1, image2, image3, categorie, quantite_stock) VALUES
 ('Rolex Submariner', 'Montre de plongée légendaire avec mouvement automatique, étanche jusqu\'à 300m. Cadran noir emblématique.',
  8500.00, 'imgs/rolex_submariner.jpg', 'imgs/rolex_submariner_2.jpg', 'imgs/rolex_submariner_3.jpg', 'Luxury', 5),
@@ -133,13 +132,16 @@ INSERT INTO produits (nom, description, prix, image1, image2, image3, categorie,
  320.00, 'imgs/citizen_ecodrive.jpg', 'imgs/citizen_ecodrive_2.jpg', 'imgs/citizen_ecodrive_3.jpg', 'Casual', 18),
 ('Hamilton Khaki Field', 'Montre militaire inspirée des montres de terrain américaines. Robuste et lisible avec style vintage.',
  550.00, 'imgs/hamilton_khaki.jpg', 'imgs/hamilton_khaki_2.jpg', 'imgs/hamilton_khaki_3.jpg', 'Sport', 10);
--- Commande exemple
+
+-- Commande exemple (utilisateur_id=2 = client_test)
 INSERT INTO commandes (utilisateur_id, total, statut, nom_livraison, adresse_livraison, telephone_livraison, email_livraison) VALUES
 (2, 8950.00, 'en_attente', 'Client Test', '15 Rue Didouche Mourad, Alger 16000', '+213555123456', 'client@test.com');
+
 -- Détails de la commande exemple
 INSERT INTO details_commande (commande_id, produit_id, nom_produit, quantite, prix_unitaire) VALUES
 (1, 1, 'Rolex Submariner', 1, 8500.00),
 (1, 6, 'Apple Watch Series 9', 1, 450.00);
+
 -- ========================================
 -- VUE UTILE: vue_commandes_completes
 -- ========================================
