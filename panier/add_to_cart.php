@@ -3,8 +3,8 @@ session_start();
 include('../config.php');
 
 // Vérifier si l'utilisateur est connecté
-if (!isset($_SESSION['nom_utilisateur']) || !isset($_SESSION['id'])) {  // CHANGEMENT: 'name' → 'nom_utilisateur'
-    header("Location: ../Client/index.php");
+if (!isset($_SESSION['id'])) {
+    header("Location: ../Client/index.php?error=Veuillez vous connecter");
     exit();
 }
 
@@ -17,46 +17,44 @@ if (isset($_POST['produit_id']) && isset($_POST['quantite']) && isset($_POST['pr
 
     // Vérifier que la quantité est valide
     if ($quantite < 1) {
-        header("Location: ../index1.php?error=Quantité invalide.");
+        header("Location: ../index1.php?error=Quantité invalide");
         exit();
     }
 
-    // NOUVEAU : Check stock disponible
-    $stmt_stock = $con->prepare("SELECT quantite_stock, image1 FROM produits WHERE id = ?");
-    $stmt_stock->bind_param("i", $produit_id);
-    $stmt_stock->execute();
-    $stock_result = $stmt_stock->get_result();
-    $stock_data = $stock_result->fetch_assoc();
-    
-    if ($stock_data['quantite_stock'] < $quantite) {
-        header("Location: ../product_details.php?id=$produit_id&error=Stock insuffisant (seulement " . $stock_data['quantite_stock'] . " disponibles)");
+    // Récupérer l'image correspondante depuis la table `produits`
+    $query_image = "SELECT image1 FROM produits WHERE id = $produit_id";
+    $result_image = mysqli_query($con, $query_image);
+
+    if ($row_image = mysqli_fetch_assoc($result_image)) {
+        $img = $row_image['image1'];
+    } else {
+        header("Location: ../index1.php?error=Produit introuvable");
         exit();
     }
 
-    $img = $stock_data['image1'];  // Récupère image1
-
-    // Vérifier si le produit existe déjà dans le panier
+    // Ajouter ou mettre à jour le produit dans la table `panier`
     $check_query = "SELECT * FROM panier WHERE utilisateur_id = $user_id AND produit_id = $produit_id";
     $result = mysqli_query($con, $check_query);
 
     if (mysqli_num_rows($result) > 0) {
-        // Si déjà dans panier, update quantité
+        // Si le produit existe déjà dans le panier, mettre à jour la quantité
         $update_query = "UPDATE panier 
                          SET quantite = quantite + $quantite 
                          WHERE utilisateur_id = $user_id AND produit_id = $produit_id";
         mysqli_query($con, $update_query);
     } else {
-        // Insert nouveau
+        // Insérer un nouveau produit dans le panier avec l'image
         $insert_query = "INSERT INTO panier (utilisateur_id, produit_id, quantite, prix, image) 
                          VALUES ($user_id, $produit_id, $quantite, $prix, '$img')";
         mysqli_query($con, $insert_query);
     }
 
-    // Redirection avec succès
-    header("Location: ../index1.php?success=Produit ajouté au panier");
+    // Redirection vers la page du panier
+    header("Location: view_cart.php?success=Produit ajouté au panier");
     exit();
 } else {
-    header("Location: ../index1.php?error=Paramètres manquants");
+    // Redirection si les données du formulaire sont manquantes
+    header("Location: ../index1.php?error=Données manquantes");
     exit();
 }
 ?>

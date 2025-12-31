@@ -4,7 +4,7 @@ include('../config.php');
 
 // Vérification de la connexion utilisateur
 if (!isset($_SESSION['id'])) {
-    header("Location: Client/index.php?error=Veuillez vous connecter");
+    header("Location: ../Client/index.php?error=Veuillez vous connecter");
     exit();
 }
 
