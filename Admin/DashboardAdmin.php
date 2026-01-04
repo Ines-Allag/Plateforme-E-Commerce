@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Admin - Kelthouma Tech Store</title>
+  <title>Dashboard Admin - Atelier </title>
   <link rel="stylesheet" href="../global.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -30,14 +30,12 @@
       padding: 0 1rem;
     }
 
-    .admin-logo {
-      font-family: var(--font-serif);
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-
-    .admin-logo span {
-      color: var(--accent);
+    .admin-logo img {
+      height: 35px; 
+      width: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .admin-nav ul {
@@ -66,26 +64,19 @@
       width: 100%;
     }
 
-    .welcome-section {
+    /* Hero Section */
+    .hero-section {
+      position: relative;
+      height: 500px;
+      background: url('../imgs/banner2.png');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      padding: 4rem 2rem;
-      background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 80%, black) 100%);
-      border-radius: var(--radius);
-      margin-bottom: 3rem;
       color: var(--primary-foreground);
-    }
-
-    .welcome-section h1 {
-      font-family: var(--font-serif);
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .welcome-section p {
-      font-size: 1.125rem;
-      opacity: 0.9;
-      max-width: 600px;
-      margin: 0 auto;
+      margin-bottom: 3rem;
     }
 
     .dashboard-stats {
@@ -179,7 +170,9 @@
   <header class="admin-header">
     <div class="admin-header-content">
       <div class="admin-logo">
-        <h2>Kelthouma <span>|| Tech Store</span></h2>
+        <a href="index1.php">
+          <img src="../imgs/Atelier.png" alt="Atelier Logo">
+        </a>
       </div>
       <nav class="admin-nav">
         <ul>
@@ -191,12 +184,11 @@
     </div>
   </header>
 
-  <main class="admin-main">
-    <section class="welcome-section">
-      <h1>Welcome to Admin Dashboard</h1>
-      <p>Manage your store efficiently with our powerful admin tools</p>
+    <!-- Hero Section -->
+    <section class="hero-section">
     </section>
 
+  <main class="admin-main">
     <div class="dashboard-stats">
       <div class="stat-card">
         <i class="fas fa-box-open"></i>

@@ -30,7 +30,7 @@ $result = $stmt->get_result();
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Mes Commandes - Kelthouma Tech Store</title>
+    <title>Mes Commandes - Atelier</title>
     <link rel="stylesheet" href="../global.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -325,8 +325,8 @@ $result = $stmt->get_result();
 </head>
 <body>
     <div class="orders-container">
-        <a href="view_cart.php" class="back-btn">
-            <i class="fas fa-arrow-left"></i> Retour au panier
+        <a href="../index1.php" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Retour au magasin
         </a>
 
         <div class="orders-header">

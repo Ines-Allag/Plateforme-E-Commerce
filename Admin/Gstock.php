@@ -30,14 +30,12 @@
       padding: 0 1rem;
     }
 
-    .admin-logo {
-      font-family: var(--font-serif);
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-
-    .admin-logo span {
-      color: var(--accent);
+    .admin-logo img {
+      height: 35px; 
+      width: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .admin-nav ul {
@@ -188,15 +186,19 @@
   </style>
 </head>
 <body class="admin-container">
+</head>
+<body class="admin-container">
   <header class="admin-header">
     <div class="admin-header-content">
       <div class="admin-logo">
-        <h2>Watch Store <span>|| Admin</span></h2>
+        <a href="index1.php">
+          <img src="../imgs/Atelier.png" alt="Atelier Logo">
+        </a>
       </div>
       <nav class="admin-nav">
         <ul>
           <li><a href="DashboardAdmin.php"><i class="fas fa-home"></i> Home</a></li>
-          <li><a href="Gstock.php" class="active"><i class="fas fa-boxes"></i> Gestion Stock</a></li>
+          <li><a href="Gstock.php"><i class="fas fa-boxes"></i> Gestion Stock</a></li>
           <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
       </nav>

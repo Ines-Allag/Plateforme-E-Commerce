@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Watch Store - Boutique de Montres</title>
+  <title>Atelier</title>
   <link rel="stylesheet" href="global.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -26,17 +26,12 @@
       gap: 0.5rem;
     }
 
-    .store-logo {
-      font-family: var(--font-serif);
-      font-size: 1.8rem;
-      font-weight: bold;
+    .store-logo img {
+      height: 35px; 
+      width: auto;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-    }
-
-    .store-logo span {
-      color: var(--accent);
     }
 
     .store-nav a {
@@ -53,19 +48,18 @@
     /* Filtres */
     .filters {
       max-width: 1200px;
-      margin: 2rem auto;
+      margin: 1rem auto;
       padding: 1rem;
       display: flex;
       flex-wrap: wrap;
       gap: 1rem;
       align-items: center;
-      justify-content: center;
+      justify-content: left;
       background-color: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-sm);
     }
 
     .filters select, .filters input, .filters button {
+      min-width: 250px;
       padding: 0.75rem;
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -73,6 +67,7 @@
     }
 
     .filters button {
+      min-width: 150px;
       background-color: var(--primary);
       color: var(--primary-foreground);
       cursor: pointer;
@@ -81,6 +76,21 @@
 
     .filters button:hover {
       background-color: var(--accent-foreground);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      position: relative;
+      height: 500px;
+      background: url('imgs/banner1.png');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--primary-foreground);
+      margin-bottom: 3rem;
     }
 
     /* Grid produits */
@@ -124,13 +134,16 @@
   <header class="store-header">
     <div class="store-header-content">
       <div class="store-logo">
-        <span>Watch Store</span>
+        <a href="index1.php">
+          <img src="imgs/Atelier.png" alt="Atelier Logo">
+        </a>
       </div>
 
       <nav class="store-nav">
         <a href="index1.php">Accueil</a>
-        <a href="#">Montres</a>
-        <a href="panier/view_cart.php">Panier <i class="fas fa-shopping-cart"></i></a>
+        <a href="#filters">Montres</a>
+        <a href="panier/view_cart.php">Panier </a>
+        <a href="panier/mes_commandes.php">Mes commandes </a>
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
           <a href="Admin/DashboardAdmin.php">Administration</a>
         <?php endif; ?>
@@ -148,8 +161,15 @@
   </header>
 
   <main>
+    <!-- Hero Section -->
+    <section class="hero-section">
+    </section>
+    
     <!-- Filtres -->
-    <div class="filters">
+    <div id="filters" class="filters">
+
+      <input type="text" id="searchBar" placeholder="Rechercher une montre...">
+
       <select id="categorie">
         <option value="">Toutes les catégories</option>
         <option value="Luxury">Luxe</option>
@@ -158,8 +178,6 @@
         <option value="Casual">Casual</option>
         <option value="Smart">Connectées</option>
       </select>
-
-      <input type="text" id="searchBar" placeholder="Rechercher une montre...">
 
       <select id="prixFilter">
         <option value="">Tous les prix</option>
@@ -200,8 +218,50 @@
       ?>
     </section>
   </main>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-grid">
+        <div class="footer-section">
+          <h3>À propos de Atelier</h3>
+          <p>Notre atelier s'engage à vous offrir des produits artisanaux de qualité, fabriqués avec des matériaux nobles et une attention particulière aux détails.</p>
+        </div>
 
-  <!-- Footer (tu gardes ton footer existant ici) -->
+        <div class="footer-section">
+          <h3>Liens rapides</h3>
+          <div class="footer-links">
+            <a href="index1.php">Accueil</a>
+            <a href="#filters">Nouveautés</a>
+            <a href="#contact">Contact</a>
+          </div>
+        </div>
+
+        <div class="footer-section">
+          <h3>Contact</h3>
+          <div class="footer-links">
+            <a href="tel:+213123456789"><i class="fas fa-phone"></i> +213 123 456 789</a>
+            <a href="mailto:contact@kelthouma.com"><i class="fas fa-envelope"></i> contact@kAtelier.com</a>
+            <a href="#"><i class="fas fa-map-marker-alt"></i> Alger, Algérie</a>
+          </div>
+        </div>
+
+        <div class="footer-section">
+          <h3>Suivez-nous</h3>
+          <div class="footer-social">
+            <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 Atelier || Watch Store. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
 <script>
     function filterProducts() {
       const category = document.getElementById("categorie").value;
