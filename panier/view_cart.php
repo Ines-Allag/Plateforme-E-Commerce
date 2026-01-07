@@ -236,7 +236,7 @@ $result = $stmt->get_result();
         }
 
         .empty-cart i {
-            font-size: 3rem;
+            font-size: 2rem;
             margin-bottom: 1rem;
             color: var(--border);
         }
@@ -460,7 +460,7 @@ $result = $stmt->get_result();
                 <i class="fas fa-shopping-cart"></i>
                 <h2>Votre panier est vide</h2>
                 <p>Ajoutez des articles à votre panier pour continuer.</p>
-                <a href="../index1.php" class="btn-primary" style="margin-top: 1rem;">
+                <a href="../ProductList.php" class="btn-primary" style="margin-top: 1rem;">
                     <i class="fas fa-shopping-bag"></i> Parcourir les produits
                 </a>
             </div>

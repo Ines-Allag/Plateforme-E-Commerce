@@ -36,7 +36,7 @@ if (isset($_POST['uname']) && isset($_POST['password'])) {
                     header("Location: ../index1.php");
                     exit();
                 } else {
-                    header("Location: index.php?error=Rôle incorrect");
+                    header("Location: index.php?error=Compte incorrect");
                     exit();
                 }
             } else {

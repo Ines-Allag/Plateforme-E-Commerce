@@ -45,54 +45,42 @@
       background-color: rgba(255,255,255,0.1);
     }
 
-    /* Filtres */
     .filters {
-      max-width: 1200px;
-      margin: 1rem auto;
-      padding: 1rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      align-items: center;
-      justify-content: left;
-      background-color: var(--card);
+    max-width: 1200px;
+    margin: 1rem auto; 
+    padding: 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-start; 
+    background-color: transparent; 
     }
 
-    .filters select, .filters input, .filters button {
-      min-width: 250px;
-      padding: 0.75rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      font-size: 1rem;
+    .filters select, 
+    .filters input {
+    flex: 1; 
+    min-width: 200px; 
+    max-width: 300px;  
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.9rem;
     }
 
     .filters button {
-      min-width: 150px;
-      background-color: var(--primary);
-      color: var(--primary-foreground);
-      cursor: pointer;
-      transition: background-color 0.2s;
+    padding: 0.75rem 2rem;
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: opacity 0.2s;
     }
 
     .filters button:hover {
       background-color: var(--accent-foreground);
     }
-
-    /* Hero Section */
-    .hero-section {
-      position: relative;
-      height: 500px;
-      background: url('imgs/banner1.png');
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      color: var(--primary-foreground);
-      margin-bottom: 3rem;
-    }
-
     /* Grid produits */
     .products-grid {
       max-width: 1200px;
@@ -142,10 +130,8 @@
       <nav class="store-nav">
         <a href="index1.php">Accueil</a>
         <a href="ProductList.php">Produits</a>
-        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'client'): ?>
-        <a href="panier/view_cart.php"><i class="fas fa-shopping-cart"></i>Panier </a>
+        <a href="panier/view_cart.php">Panier </a>
         <a href="panier/mes_commandes.php">Mes commandes </a>
-        <?php endif; ?>
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
           <a href="Admin/DashboardAdmin.php">Administration</a>
         <?php endif; ?>
@@ -162,11 +148,33 @@
     </div>
   </header>
 
-  <main>
-    <!-- Hero Section -->
-    <section class="hero-section">
-    </section>
-    
+  <main>    
+    <!-- Filtres -->
+    <div id="filters" class="filters">
+
+      <input type="text" id="searchBar" placeholder="Rechercher une montre...">
+
+      <select id="categorie">
+        <option value="">Toutes les catégories</option>
+        <option value="Luxury">Luxe</option>
+        <option value="Sport">Sport</option>
+        <option value="Dress">Habillées</option>
+        <option value="Casual">Casual</option>
+        <option value="Smart">Connectées</option>
+      </select>
+
+      <select id="prixFilter">
+        <option value="">Tous les prix</option>
+        <option value="0-500">0 - 500 DZD</option>
+        <option value="500-1000">500 - 1 000 DZD</option>
+        <option value="1000-5000">1 000 - 5 000 DZD</option>
+        <option value="5000-10000">5 000 - 10 000 DZD</option>
+        <option value="10000-999999">+ 10 000 DZD</option>
+      </select>
+
+      <button onclick="filterProducts()">Filtrer</button>
+    </div>
+
     <!-- Liste des produits -->
     <section id="section2" class="products-grid">
       <?php

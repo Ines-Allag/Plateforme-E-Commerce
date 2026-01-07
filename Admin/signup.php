@@ -169,7 +169,7 @@
     <div class="signup-container">
         <div class="signup-card">
             <div class="signup-header">
-                <h1>📝 Créer un compte Admin</h1>
+                <h1>Créer un compte Admin</h1>
                 <p>Rejoignez l'équipe d'administration</p>
             </div>
 
@@ -204,14 +204,6 @@
                            name="password" 
                            placeholder="Créez un mot de passe sécurisé" 
                            required>
-                    <div class="password-requirements">
-                        <strong>Recommandations :</strong>
-                        <ul>
-                            <li>Au moins 8 caractères</li>
-                            <li>Mélange de lettres et chiffres</li>
-                            <li>Au moins une majuscule</li>
-                        </ul>
-                    </div>
                 </div>
 
                 <div class="form-group">

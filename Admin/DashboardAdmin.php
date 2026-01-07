@@ -167,16 +167,11 @@
 
   <main class="admin-main">
     <div class="admin-actions">
-      <!-- ===================================== -->
-      <!-- STOCK MANAGEMENT CARD - UPDATED ✅ -->
-      <!-- ===================================== -->
-      <!-- Before: href="Gstock.php" -->
-      <!-- After:  href="stock_management.php" -->
+
       <div class="action-card">
         <i class="fas fa-boxes"></i>
         <h3>Gestion du Stock</h3>
         <p>Voir, ajouter, modifier ou supprimer des produits de votre inventaire</p>
-        <!-- ⚠️ CHANGED: Links to product list page now -->
         <a href="stock_management.php" class="btn btn-primary">Gérer le Stock</a>
       </div>
 

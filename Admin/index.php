@@ -141,7 +141,7 @@
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <h1>🔐 Connexion Admin</h1>
+                <h1>Connexion Admin</h1>
                 <p>Accédez au tableau de bord administrateur</p>
             </div>
 
