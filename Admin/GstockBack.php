@@ -1,99 +1,206 @@
 <?php  
 session_start();
-include('../config.php');
 
-// Ajouter ou modifier un produit
-if (isset($_POST['ajouter'])) {
-    // Récupérer les données du formulaire
-    $NAME = mysqli_real_escape_string($con, $_POST['nom']);
-    $DESCRIPTION = mysqli_real_escape_string($con, $_POST['description']);
-    $CATEGORIE = mysqli_real_escape_string($con, $_POST['categorie']);
-    $PRIX = mysqli_real_escape_string($con, $_POST['prix']);
-    
-    // Gérer les 3 images
-    $IMAGE1 = $_FILES['img1'];
-    $IMAGE2 = isset($_FILES['img2']) ? $_FILES['img2'] : null;
-    $IMAGE3 = isset($_FILES['img3']) ? $_FILES['img3'] : null;
-
-    $image1_up = "imgs/default.jpg";
-    $image2_up = null;
-    $image3_up = null;
-
-    $allowed_extensions = array("jpg", "jpeg", "png", "gif");
-
-    // Traiter image 1 (obligatoire)
-    if (isset($IMAGE1['name']) && !empty($IMAGE1['name'])) {
-        $image1_name = $IMAGE1['name'];
-        $image1_tmp = $IMAGE1['tmp_name'];
-        $image1_extension = strtolower(pathinfo($image1_name, PATHINFO_EXTENSION));
-
-        if (in_array($image1_extension, $allowed_extensions)) {
-            $image1_up = "imgs/" . $image1_name;
-            if (!move_uploaded_file($image1_tmp, $image1_up)) {
-                echo "<script>alert('Erreur lors du téléchargement de l\\'image 1.');</script>";
-            }
-        } else {
-            echo "<script>alert('Type de fichier non autorisé pour l\\'image 1.');</script>";
-        }
-    }
-
-    // Traiter image 2 (optionnelle)
-    if (isset($IMAGE2['name']) && !empty($IMAGE2['name'])) {
-        $image2_name = $IMAGE2['name'];
-        $image2_tmp = $IMAGE2['tmp_name'];
-        $image2_extension = strtolower(pathinfo($image2_name, PATHINFO_EXTENSION));
-
-        if (in_array($image2_extension, $allowed_extensions)) {
-            $image2_up = "imgs/" . $image2_name;
-            move_uploaded_file($image2_tmp, $image2_up);
-        } else {
-            echo "<script>alert('Type de fichier non autorisé pour l\\'image 2.');</script>";
-        }
-    }
-
-    // Traiter image 3 (optionnelle)
-    if (isset($IMAGE3['name']) && !empty($IMAGE3['name'])) {
-        $image3_name = $IMAGE3['name'];
-        $image3_tmp = $IMAGE3['tmp_name'];
-        $image3_extension = strtolower(pathinfo($image3_name, PATHINFO_EXTENSION));
-
-        if (in_array($image3_extension, $allowed_extensions)) {
-            $image3_up = "imgs/" . $image3_name;
-            move_uploaded_file($image3_tmp, $image3_up);
-        } else {
-            echo "<script>alert('Type de fichier non autorisé pour l\\'image 3.');</script>";
-        }
-    }
-
-    // Si l'ID du produit est spécifié, c'est une mise à jour
-    if (isset($_POST['id'])) {
-        $id = $_POST['id'];
-        // CHANGEMENT: Colonnes 'nom', 'image1', 'image2', 'image3'
-        $update_query = "UPDATE produits 
-                         SET nom = '$NAME', description = '$DESCRIPTION', prix = '$PRIX', 
-                             image1 = '$image1_up', image2 = '$image2_up', image3 = '$image3_up', 
-                             categorie = '$CATEGORIE' 
-                         WHERE id = '$id'";
-
-        if (mysqli_query($con, $update_query)) {
-            echo "<script>alert('Produit modifié correctement');</script>";
-        } else {
-            echo "<script>alert('Erreur lors de la modification du produit');</script>";
-        }
-    } else {
-        // CHANGEMENT: Colonnes 'nom', 'image1', 'image2', 'image3'
-        $insert = "INSERT INTO produits (nom, description, prix, image1, image2, image3, categorie) 
-                   VALUES ('$NAME', '$DESCRIPTION', '$PRIX', '$image1_up', '$image2_up', '$image3_up', '$CATEGORIE')";
-
-        if (mysqli_query($con, $insert)) {
-            echo "<script>alert('Produit ajouté correctement');</script>";
-        } else {
-            echo "<script>alert('Erreur: " . mysqli_error($con) . "');</script>";
-        }
-    }
-
-    // Rediriger après l'ajout ou la mise à jour
-    header('location: Gstock.php');
+// Vérifier si l'admin est connecté
+if (!isset($_SESSION['nom_utilisateur']) || $_SESSION['role'] !== 'admin') {
+    header("Location: index.php?error=Accès non autorisé");
     exit();
 }
+
+include('../config.php');
+
+// FONCTION POUR UPLOADER UNE IMAGE
+function uploadImage($file, $index) {
+    if (!isset($file['name']) || empty($file['name'])) {
+        return null;
+    }
+
+    $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    $file_extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    
+    // Vérifier l'extension
+    if (!in_array($file_extension, $allowed_extensions)) {
+        return ['error' => "Format non autorisé pour l'image $index"];
+    }
+    
+    // Vérifier la taille (5MB max)
+    if ($file['size'] > 5 * 1024 * 1024) {
+        return ['error' => "L'image $index est trop volumineuse (max 5MB)"];
+    }
+    
+    // Créer le dossier s'il n'existe pas
+    $upload_dir = "../imgs/produits/";
+    if (!is_dir($upload_dir)) {
+        mkdir($upload_dir, 0755, true);
+    }
+    
+    // Générer un nom unique
+    $unique_name = uniqid() . '_' . time() . '.' . $file_extension;
+    $destination = $upload_dir . $unique_name;
+    
+    // Déplacer le fichier
+    if (move_uploaded_file($file['tmp_name'], $destination)) {
+        return $destination;
+    } else {
+        return ['error' => "Erreur lors de l'upload de l'image $index"];
+    }
+}
+
+// AJOUTER UN NOUVEAU PRODUIT
+if (isset($_POST['ajouter'])) {
+    $nom = mysqli_real_escape_string($con, trim($_POST['nom']));
+    $description = mysqli_real_escape_string($con, trim($_POST['description']));
+    $categorie = mysqli_real_escape_string($con, trim($_POST['categorie']));
+    $prix = floatval($_POST['prix']);
+    $quantite_stock = intval($_POST['quantite_stock']);
+    
+    // Validation
+    if (empty($nom) || empty($description) || empty($categorie) || $prix <= 0) {
+        header("Location: Gstock.php?error=Tous les champs obligatoires doivent être remplis");
+        exit();
+    }
+    
+    // Upload des images
+    $images = [];
+    $error = null;
+    
+    for ($i = 1; $i <= 3; $i++) {
+        if (isset($_FILES["image$i"]) && $_FILES["image$i"]['error'] !== UPLOAD_ERR_NO_FILE) {
+            $upload_result = uploadImage($_FILES["image$i"], $i);
+            
+            if (is_array($upload_result) && isset($upload_result['error'])) {
+                $error = $upload_result['error'];
+                break;
+            }
+            
+            $images[$i] = $upload_result;
+        } else {
+            $images[$i] = null;
+        }
+    }
+    
+    // Si erreur lors de l'upload
+    if ($error) {
+        header("Location: Gstock.php?error=" . urlencode($error));
+        exit();
+    }
+    
+    // Vérifier qu'au moins une image est fournie
+    if (empty($images[1])) {
+        header("Location: Gstock.php?error=Au moins une image est requise");
+        exit();
+    }
+    
+    // Insertion dans la base de données
+    $sql = "INSERT INTO produits (nom, description, categorie, prix, quantite_stock, image1, image2, image3, date_ajout) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+    
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, "ssssisss", 
+        $nom, 
+        $description, 
+        $categorie, 
+        $prix, 
+        $quantite_stock, 
+        $images[1], 
+        $images[2], 
+        $images[3]
+    );
+    
+    if (mysqli_stmt_execute($stmt)) {
+        header("Location: stock_management.php?success=Produit ajouté avec succès");
+        exit();
+    } else {
+        header("Location: Gstock.php?error=Erreur lors de l'ajout du produit");
+        exit();
+    }
+}
+
+// MODIFIER UN PRODUIT EXISTANT
+if (isset($_POST['modifier'])) {
+    $product_id = intval($_POST['product_id']);
+    $nom = mysqli_real_escape_string($con, trim($_POST['nom']));
+    $description = mysqli_real_escape_string($con, trim($_POST['description']));
+    $categorie = mysqli_real_escape_string($con, trim($_POST['categorie']));
+    $prix = floatval($_POST['prix']);
+    $quantite_stock = intval($_POST['quantite_stock']);
+    
+    // Validation
+    if (empty($nom) || empty($description) || empty($categorie) || $prix <= 0) {
+        header("Location: Gstock.php?edit_id=$product_id&error=Tous les champs obligatoires doivent être remplis");
+        exit();
+    }
+    
+    // Récupérer les images actuelles
+    $query = "SELECT image1, image2, image3 FROM produits WHERE id = ?";
+    $stmt = mysqli_prepare($con, $query);
+    mysqli_stmt_bind_param($stmt, "i", $product_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $current_product = mysqli_fetch_assoc($result);
+    
+    $images = [
+        1 => $current_product['image1'],
+        2 => $current_product['image2'],
+        3 => $current_product['image3']
+    ];
+    
+    // Upload de nouvelles images si fournies
+    $error = null;
+    
+    for ($i = 1; $i <= 3; $i++) {
+        if (isset($_FILES["image$i"]) && $_FILES["image$i"]['error'] !== UPLOAD_ERR_NO_FILE) {
+            $upload_result = uploadImage($_FILES["image$i"], $i);
+            
+            if (is_array($upload_result) && isset($upload_result['error'])) {
+                $error = $upload_result['error'];
+                break;
+            }
+            
+            // Supprimer l'ancienne image si elle existe
+            if (!empty($images[$i]) && file_exists($images[$i])) {
+                @unlink($images[$i]);
+            }
+            
+            $images[$i] = $upload_result;
+        }
+    }
+    
+    // Si erreur lors de l'upload
+    if ($error) {
+        header("Location: Gstock.php?edit_id=$product_id&error=" . urlencode($error));
+        exit();
+    }
+    
+    // Mise à jour dans la base de données
+    $sql = "UPDATE produits 
+            SET nom = ?, description = ?, categorie = ?, prix = ?, quantite_stock = ?, 
+                image1 = ?, image2 = ?, image3 = ?
+            WHERE id = ?";
+    
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, "ssssisssi", 
+        $nom, 
+        $description, 
+        $categorie, 
+        $prix, 
+        $quantite_stock, 
+        $images[1], 
+        $images[2], 
+        $images[3],
+        $product_id
+    );
+    
+    if (mysqli_stmt_execute($stmt)) {
+        header("Location: stock_management.php?success=Produit modifié avec succès");
+        exit();
+    } else {
+        header("Location: Gstock.php?edit_id=$product_id&error=Erreur lors de la modification");
+        exit();
+    }
+}
+
+// Si aucune action n'est définie
+header("Location: stock_management.php");
+exit();
 ?>
