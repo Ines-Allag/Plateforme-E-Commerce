@@ -17,14 +17,36 @@ if (isset($_POST['quantite']) && isset($_POST['produit_id'])) {
 
     // Vérifier que la quantité est supérieure à 0
     if ($quantite > 0) {
-        // Mise à jour de la quantité dans la table panier
-        $stmt = $con->prepare("UPDATE panier SET quantite = ? WHERE utilisateur_id = ? AND produit_id = ?");
-        $stmt->bind_param("iii", $quantite, $user_id, $produit_id);
-        $stmt->execute();
+        // Vérifier le stock disponible
+        $stmt_stock = $con->prepare("SELECT quantite_stock, nom FROM produits WHERE id = ?");
+        $stmt_stock->bind_param("i", $produit_id);
+        $stmt_stock->execute();
+        $result_stock = $stmt_stock->get_result();
+        
+        if ($result_stock->num_rows > 0) {
+            $produit = $result_stock->fetch_assoc();
+            $stock_disponible = $produit['quantite_stock'];
+            $nom_produit = $produit['nom'];
+            
+            // Vérifier si la quantité demandée est disponible en stock
+            if ($quantite > $stock_disponible) {
+                // Redirection avec message d'erreur si stock insuffisant
+                header("Location: view_cart.php?error=Stock insuffisant pour " . urlencode($nom_produit) . ". Disponible : " . $stock_disponible);
+                exit();
+            }
+            
+            // Mise à jour de la quantité dans la table panier
+            $stmt = $con->prepare("UPDATE panier SET quantite = ? WHERE utilisateur_id = ? AND produit_id = ?");
+            $stmt->bind_param("iii", $quantite, $user_id, $produit_id);
+            $stmt->execute();
 
-        // Redirection vers le panier avec un message de succès
-        header("Location: view_cart.php?success=Quantité mise à jour");
-        exit();
+            // Redirection vers le panier avec un message de succès
+            header("Location: view_cart.php?success=Quantité mise à jour");
+            exit();
+        } else {
+            header("Location: view_cart.php?error=Produit introuvable");
+            exit();
+        }
     } else {
         // Redirection avec un message d'erreur si la quantité est invalide
         header("Location: view_cart.php?error=Quantité invalide");

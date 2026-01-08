@@ -164,7 +164,51 @@
     .product-card:hover .product-image img {
       transform: scale(1.05);
     }
+  /* Conteneur pour positionner la liste */
+    .search-wrapper {
+        position: relative;
+        flex: 1;
+        min-width: 200px;
+        max-width: 300px;
+    }
 
+    /* Style de la liste d'historique */
+    #search-history {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: white;
+        border: 1px solid var(--border);
+        border-top: none;
+        border-radius: 0 0 var(--radius) var(--radius);
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: none; /* Caché par défaut */
+        z-index: 1000;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    #search-history li {
+        padding: 10px 15px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        color: #555;
+    }
+
+    #search-history li i {
+        margin-right: 10px;
+        color: #b08d6d; /* Votre couleur bronze */
+        font-size: 0.8rem;
+    }
+
+    #search-history li:hover {
+        background-color: #f9f9f9;
+        color: var(--primary);
+    }
   </style>
 </head>
 <body>
@@ -203,7 +247,10 @@
     <!-- Filtres -->
     <div id="filters" class="filters">
 
-      <input type="text" id="searchBar" placeholder="Rechercher une montre...">
+      <div class="search-wrapper">
+        <input type="text" id="searchBar" placeholder="Rechercher une montre..." autocomplete="off">
+        <ul id="search-history"></ul>
+       </div>
 
       <select id="categorie">
         <option value="">Toutes les catégories</option>
@@ -321,6 +368,69 @@
             filterProducts();
         }
     });
+    const searchInput = document.getElementById('searchBar');
+    const historyList = document.getElementById('search-history');
+
+    // Fonction pour lire les cookies
+    function getCookie(name) {
+        let nameEQ = name + "=";
+        let ca = document.cookie.split(';');
+        for(let i=0;i < ca.length;i++) {
+            let c = ca[i].trim();
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+
+    // Afficher l'historique quand on clique dans la barre
+    searchInput.addEventListener('focus', function() {
+        const historyData = getCookie('search_history');
+        if (historyData) {
+            const terms = historyData.split('|');
+            historyList.innerHTML = ''; // Nettoyer
+            
+            terms.forEach(term => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-history"></i> ${decodeURIComponent(term)}`;
+                li.onclick = function() {
+                    searchInput.value = decodeURIComponent(term);
+                    historyList.style.display = 'none';
+                    filterProducts(); // Lancer la recherche
+                };
+                historyList.appendChild(li);
+            });
+            historyList.style.display = 'block';
+        }
+    });
+
+    // Cacher si on clique ailleurs
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !historyList.contains(e.target)) {
+            historyList.style.display = 'none';
+        }
+    });
+
+    // Modifier votre fonction existante pour cacher la liste après recherche
+    const originalFilterProducts = filterProducts;
+    filterProducts = function() {
+        historyList.style.display = 'none';
+        // Appel de la logique originale (votre code fetch)
+        const category = document.getElementById("categorie").value;
+        const searchTerm = document.getElementById("searchBar").value.trim();
+        const prixRange = document.getElementById("prixFilter").value;
+
+        let url = "recherche.php?";
+        if (category) url += "categorie=" + encodeURIComponent(category) + "&";
+        if (searchTerm) url += "query=" + encodeURIComponent(searchTerm) + "&";
+        if (prixRange) url += "prix=" + encodeURIComponent(prixRange);
+
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("section2").innerHTML = data;
+            })
+            .catch(error => console.error('Erreur:', error));
+    };
 </script>
 </body>
 </html>

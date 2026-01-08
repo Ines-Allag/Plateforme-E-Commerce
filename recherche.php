@@ -1,6 +1,22 @@
 <?php
 include('config.php');
 
+$searchTerm = isset($_GET['query']) ? mysqli_real_escape_string($con, $_GET['query']) : '';
+
+// --- SAUVEGARDE DANS LE COOKIE D'HISTORIQUE ---
+if (!empty($searchTerm)) {
+    $history = isset($_COOKIE['search_history']) ? explode('|', $_COOKIE['search_history']) : [];
+    
+    // Ajouter la nouvelle recherche au début, supprimer les doublons, et limiter à 5
+    if (($key = array_search($searchTerm, $history)) !== false) {
+        unset($history[$key]);
+    }
+    array_unshift($history, $searchTerm);
+    $history = array_slice($history, 0, 5);
+    
+    // Sauvegarder pour 30 jours
+    setcookie('search_history', implode('|', $history), time() + (86400 * 30), "/");
+}
 // Récupérer les filtres AJAX
 $selectedCategory = isset($_GET['categorie']) ? mysqli_real_escape_string($con, $_GET['categorie']) : '';
 $searchTerm = isset($_GET['query']) ? mysqli_real_escape_string($con, $_GET['query']) : '';
@@ -8,6 +24,8 @@ $prixRange = isset($_GET['prix']) ? $_GET['prix'] : '';
 
 // Construire WHERE
 $whereClauses = [];
+
+
 
 if ($selectedCategory !== '') {
     $whereClauses[] = "categorie = '$selectedCategory'";

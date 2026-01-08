@@ -32,6 +32,12 @@ if (isset($_POST['uname']) && isset($_POST['password'])) {
                 $_SESSION['id'] = $row['id'];
                 $_SESSION['role'] = $row['role'];
 
+                // Définir un cookie pour l'utilisateur (expire dans 30 jours)
+                setcookie('user_id', $row['id'], time() + (86400 * 30), "/");
+                setcookie('user_name', $row['nom_utilisateur'], time() + (86400 * 30), "/");
+                setcookie('user_role', $row['role'], time() + (86400 * 30), "/");
+                setcookie('login_time', date('Y-m-d H:i:s'), time() + (86400 * 30), "/");
+
                 if ($row['role'] === 'client') {
                     header("Location: ../index1.php");
                     exit();
