@@ -47,41 +47,105 @@
     }
 
     .filters {
-    max-width: 1200px;
-    margin: 1rem auto; 
-    padding: 0 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
-    justify-content: flex-start; 
-    background-color: transparent; 
+      max-width: 1200px;
+      margin: 1rem auto; 
+      padding: 0 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: flex-start; 
+      background-color: transparent; 
     }
 
     .filters select, 
     .filters input {
-    flex: 1; 
-    min-width: 200px; 
-    max-width: 300px;  
-    padding: 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    font-size: 0.9rem;
+      flex: 1; 
+      min-width: 200px; 
+      max-width: 300px;  
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.9rem;
     }
 
     .filters button {
-    padding: 0.75rem 2rem;
-    background-color: var(--primary);
-    color: var(--primary-foreground);
-    border: none;
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: opacity 0.2s;
+      padding: 0.75rem 2rem;
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: opacity 0.2s;
     }
 
     .filters button:hover {
       background-color: var(--accent-foreground);
     }
+
+    /* Conteneur pour la barre de recherche et l'historique */
+    .search-container {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+      max-width: 300px;
+    }
+
+    .search-container input {
+      width: 100%;
+    }
+
+    /* Liste de l'historique */
+    .search-history {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: white;
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 var(--radius) var(--radius);
+      box-shadow: var(--shadow);
+      z-index: 1000;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .search-history.show {
+      display: block;
+    }
+
+    .search-history-item {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .search-history-item:last-child {
+      border-bottom: none;
+    }
+
+    .search-history-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .search-history-item i {
+      color: var(--muted-foreground);
+      font-size: 0.9rem;
+    }
+
+    .search-history-empty {
+      padding: 1rem;
+      text-align: center;
+      color: var(--muted-foreground);
+      font-size: 0.9rem;
+    }
+
     /* Grid produits */
     .products-grid {
       max-width: 1200px;
@@ -92,61 +156,57 @@
       gap: 2rem;
     }
 
-    /* Assure que toutes les cartes ont la même hauteur */
     .product-card {
-    display: flex;
-    flex-direction: column;
-    height: 100%; 
-    background-color: var(--card);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%; 
+      background-color: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    /* Centre le contenu et pousse le bouton vers le bas */
     .product-content {
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* Remplit l'espace pour aligner les boutons en bas */
-    text-align: center; /* Centre tout le texte */
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      text-align: center;
     }
 
-    /* Espace réservé pour le titre (évite les décalages si 1 ou 2 lignes) */
     .product-title {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-    min-height: 3rem; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      min-height: 3rem; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .product-price {
-    font-weight: bold;
-    font-size: 1.4rem;
-    color: #4a0404; /* Couleur sombre comme l'image */
-    margin-bottom: 1.5rem;
+      font-weight: bold;
+      font-size: 1.4rem;
+      color: #4a0404;
+      margin-bottom: 1.5rem;
     }
 
-    /* Style du bouton centré */
     .view-details {
-    display: inline-block;
-    padding: 0.8rem 1.5rem;
-    background-color: #2d0a0a; /* Marron très foncé / Noir */
-    color: white !important;
-    text-decoration: none;
-    border-radius: 4px;
-    margin: auto auto 0 auto; /* Centre horizontalement et colle au bas */
-    width: fit-content;
-    font-weight: 500;
-    transition: opacity 0.2s;
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      background-color: #2d0a0a;
+      color: white !important;
+      text-decoration: none;
+      border-radius: 4px;
+      margin: auto auto 0 auto;
+      width: fit-content;
+      font-weight: 500;
+      transition: opacity 0.2s;
     }
 
     .view-details:hover {
-    opacity: 0.9;
+      opacity: 0.9;
     }
 
     .product-card:hover {
@@ -164,56 +224,9 @@
     .product-card:hover .product-image img {
       transform: scale(1.05);
     }
-  /* Conteneur pour positionner la liste */
-    .search-wrapper {
-        position: relative;
-        flex: 1;
-        min-width: 200px;
-        max-width: 300px;
-    }
-
-    /* Style de la liste d'historique */
-    #search-history {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background: white;
-        border: 1px solid var(--border);
-        border-top: none;
-        border-radius: 0 0 var(--radius) var(--radius);
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: none; /* Caché par défaut */
-        z-index: 1000;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    #search-history li {
-        padding: 10px 15px;
-        cursor: pointer;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        color: #555;
-    }
-
-    #search-history li i {
-        margin-right: 10px;
-        color: #b08d6d; /* Votre couleur bronze */
-        font-size: 0.8rem;
-    }
-
-    #search-history li:hover {
-        background-color: #f9f9f9;
-        color: var(--primary);
-    }
   </style>
 </head>
 <body>
-  <?php include('config.php'); ?>
-
   <header class="store-header">
     <div class="store-header-content">
       <div class="store-logo">
@@ -225,20 +238,20 @@
       <nav class="store-nav">
         <a href="index1.php">Accueil</a>
         <a href="ProductList.php">Produits</a>
-        <a href="panier/view_cart.php">Panier </a>
-        <a href="panier/mes_commandes.php">Mes commandes </a>
+        <a href="panier/view_cart.php">Panier</a>
+        <a href="panier/mes_commandes.php">Mes commandes</a>
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
           <a href="Admin/DashboardAdmin.php">Administration</a>
         <?php endif; ?>
-       <?php if (isset($_SESSION['nom_utilisateur'])): ?>
-    <?php if ($_SESSION['role'] === 'admin'): ?>
-        <a href="Admin/logout.php">Déconnexion (<?= htmlspecialchars($_SESSION['nom_utilisateur']) ?>)</a>
-    <?php else: ?>
-        <a href="Client/logout.php">Déconnexion (<?= htmlspecialchars($_SESSION['nom_utilisateur']) ?>)</a>
-    <?php endif; ?>
-<?php else: ?>
-    <a href="Client/index.php">Connexion</a>
-<?php endif; ?>
+        <?php if (isset($_SESSION['nom_utilisateur'])): ?>
+          <?php if ($_SESSION['role'] === 'admin'): ?>
+            <a href="Admin/logout.php">Déconnexion (<?= htmlspecialchars($_SESSION['nom_utilisateur']) ?>)</a>
+          <?php else: ?>
+            <a href="Client/logout.php">Déconnexion (<?= htmlspecialchars($_SESSION['nom_utilisateur']) ?>)</a>
+          <?php endif; ?>
+        <?php else: ?>
+          <a href="Client/index.php">Connexion</a>
+        <?php endif; ?>
       </nav>
     </div>
   </header>
@@ -246,11 +259,29 @@
   <main>    
     <!-- Filtres -->
     <div id="filters" class="filters">
-
-      <div class="search-wrapper">
+      <!-- Conteneur pour la recherche avec historique -->
+      <div class="search-container">
         <input type="text" id="searchBar" placeholder="Rechercher une montre..." autocomplete="off">
-        <ul id="search-history"></ul>
-       </div>
+        <div id="searchHistory" class="search-history">
+          <?php
+          // Récupérer l'historique depuis les cookies
+          $userId = isset($_SESSION['id']) ? $_SESSION['id'] : 'guest';
+          $cookieName = 'search_history_' . $userId;
+          $history = isset($_COOKIE[$cookieName]) ? explode('|', $_COOKIE[$cookieName]) : [];
+          
+          if (!empty($history)) {
+              foreach ($history as $term) {
+                  echo '<div class="search-history-item" onclick="selectHistoryItem(\'' . htmlspecialchars($term, ENT_QUOTES) . '\')">';
+                  echo '<i class="fas fa-history"></i>';
+                  echo '<span>' . htmlspecialchars($term) . '</span>';
+                  echo '</div>';
+              }
+          } else {
+              echo '<div class="search-history-empty">Aucun historique de recherche</div>';
+          }
+          ?>
+        </div>
+      </div>
 
       <select id="categorie">
         <option value="">Toutes les catégories</option>
@@ -286,11 +317,11 @@
                   <a href='product_details.php?id=" . $row['id'] . "' class='product-image'>
                       <img src='" . htmlspecialchars($row['image1']) . "' alt='" . htmlspecialchars($row['nom']) . "'>
                   </a>
-                    <div class='product-content'>
-                        <h3 class='product-title'>" . htmlspecialchars($row['nom']) . "</h3>
-                        <p class='product-price'>" . number_format($row['prix'], 2) . " DZD</p>
-                        <a href='product_details.php?id=" . $row['id'] . "' class='view-details'>Voir les détails</a>
-                    </div>
+                  <div class='product-content'>
+                      <h3 class='product-title'>" . htmlspecialchars($row['nom']) . "</h3>
+                      <p class='product-price'>" . number_format($row['prix'], 2) . " DZD</p>
+                      <a href='product_details.php?id=" . $row['id'] . "' class='view-details'>Voir les détails</a>
+                  </div>
               </div>
               ";
           }
@@ -300,6 +331,7 @@
       ?>
     </section>
   </main>
+
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
@@ -344,7 +376,29 @@
     </div>
   </footer>
 
-<script>
+  <script>
+    const searchBar = document.getElementById("searchBar");
+    const searchHistory = document.getElementById("searchHistory");
+
+    // Afficher l'historique quand on focus sur la barre de recherche
+    searchBar.addEventListener("focus", function() {
+      searchHistory.classList.add("show");
+    });
+
+    // Cacher l'historique quand on clique ailleurs
+    document.addEventListener("click", function(event) {
+      if (!event.target.closest('.search-container')) {
+        searchHistory.classList.remove("show");
+      }
+    });
+
+    // Sélectionner un élément de l'historique
+    function selectHistoryItem(term) {
+      searchBar.value = term;
+      searchHistory.classList.remove("show");
+      filterProducts();
+    }
+
     function filterProducts() {
       const category = document.getElementById("categorie").value;
       const searchTerm = document.getElementById("searchBar").value.trim();
@@ -359,78 +413,19 @@
         .then(response => response.text())
         .then(data => {
           document.getElementById("section2").innerHTML = data;
+          // Recharger la page pour mettre à jour l'historique dans les cookies
+          if (searchTerm) {
+            setTimeout(() => location.reload(), 100);
+          }
         })
         .catch(error => console.error('Erreur de filtrage:', error));
     }
 
-    document.getElementById("searchBar").addEventListener("keyup", function(event) {
-        if (event.key === "Enter") {
-            filterProducts();
-        }
+    searchBar.addEventListener("keyup", function(event) {
+      if (event.key === "Enter") {
+        filterProducts();
+      }
     });
-    const searchInput = document.getElementById('searchBar');
-    const historyList = document.getElementById('search-history');
-
-    // Fonction pour lire les cookies
-    function getCookie(name) {
-        let nameEQ = name + "=";
-        let ca = document.cookie.split(';');
-        for(let i=0;i < ca.length;i++) {
-            let c = ca[i].trim();
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-        }
-        return null;
-    }
-
-    // Afficher l'historique quand on clique dans la barre
-    searchInput.addEventListener('focus', function() {
-        const historyData = getCookie('search_history');
-        if (historyData) {
-            const terms = historyData.split('|');
-            historyList.innerHTML = ''; // Nettoyer
-            
-            terms.forEach(term => {
-                const li = document.createElement('li');
-                li.innerHTML = `<i class="fas fa-history"></i> ${decodeURIComponent(term)}`;
-                li.onclick = function() {
-                    searchInput.value = decodeURIComponent(term);
-                    historyList.style.display = 'none';
-                    filterProducts(); // Lancer la recherche
-                };
-                historyList.appendChild(li);
-            });
-            historyList.style.display = 'block';
-        }
-    });
-
-    // Cacher si on clique ailleurs
-    document.addEventListener('click', function(e) {
-        if (!searchInput.contains(e.target) && !historyList.contains(e.target)) {
-            historyList.style.display = 'none';
-        }
-    });
-
-    // Modifier votre fonction existante pour cacher la liste après recherche
-    const originalFilterProducts = filterProducts;
-    filterProducts = function() {
-        historyList.style.display = 'none';
-        // Appel de la logique originale (votre code fetch)
-        const category = document.getElementById("categorie").value;
-        const searchTerm = document.getElementById("searchBar").value.trim();
-        const prixRange = document.getElementById("prixFilter").value;
-
-        let url = "recherche.php?";
-        if (category) url += "categorie=" + encodeURIComponent(category) + "&";
-        if (searchTerm) url += "query=" + encodeURIComponent(searchTerm) + "&";
-        if (prixRange) url += "prix=" + encodeURIComponent(prixRange);
-
-        fetch(url)
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById("section2").innerHTML = data;
-            })
-            .catch(error => console.error('Erreur:', error));
-    };
-</script>
+  </script>
 </body>
 </html>
