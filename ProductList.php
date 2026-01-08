@@ -413,10 +413,6 @@
         .then(response => response.text())
         .then(data => {
           document.getElementById("section2").innerHTML = data;
-          // Recharger la page pour mettre à jour l'historique dans les cookies
-          if (searchTerm) {
-            setTimeout(() => location.reload(), 100);
-          }
         })
         .catch(error => console.error('Erreur de filtrage:', error));
     }
