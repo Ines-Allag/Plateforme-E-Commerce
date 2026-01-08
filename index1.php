@@ -436,7 +436,7 @@ include('config.php'); ?>
     </section>
     
     <!-- Liste des produits -->
-    <h2 class="section-title">Nouvelle Collection</h2>
+    <h2 id="produitList" class="section-title">Nouvelle Collection</h2>
 
     <section id="section2" class="products-grid">
       <?php
@@ -494,7 +494,7 @@ include('config.php'); ?>
           <h3>Liens rapides</h3>
           <div class="footer-links">
             <a href="index1.php">Accueil</a>
-            <a href="#filters">Nouveautés</a>
+            <a href="#produitList">Nouveautés</a>
             <a href="#contact">Contact</a>
           </div>
         </div>
