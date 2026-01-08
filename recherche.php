@@ -1,6 +1,23 @@
 <?php
 include('config.php');
 
+$searchTerm = isset($_GET['query']) ? mysqli_real_escape_string($con, $_GET['query']) : '';
+$userId = isset($_SESSION['id']) ? $_SESSION['id'] : 'guest'; // On récupère l'ID
+
+//  HISTORIQUE PAR CLIENT
+if (!empty($searchTerm)) {
+    $cookieName = 'search_history_' . $userId; 
+    $history = isset($_COOKIE[$cookieName]) ? explode('|', $_COOKIE[$cookieName]) : [];
+    
+    if (($key = array_search($searchTerm, $history)) !== false) {
+        unset($history[$key]);
+    }
+    
+    array_unshift($history, $searchTerm);
+    $history = array_slice($history, 0, 5);
+    
+    setcookie($cookieName, implode('|', $history), time() + (86400 * 30), "/");
+}
 // Récupérer les filtres AJAX
 $selectedCategory = isset($_GET['categorie']) ? mysqli_real_escape_string($con, $_GET['categorie']) : '';
 $searchTerm = isset($_GET['query']) ? mysqli_real_escape_string($con, $_GET['query']) : '';
@@ -8,6 +25,7 @@ $prixRange = isset($_GET['prix']) ? $_GET['prix'] : '';
 
 // Construire WHERE
 $whereClauses = [];
+
 
 if ($selectedCategory !== '') {
     $whereClauses[] = "categorie = '$selectedCategory'";

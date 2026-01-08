@@ -1,4 +1,5 @@
-<?php include('config.php'); ?>
+<?php session_start(); 
+include('config.php'); ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -322,11 +323,63 @@
     .btn-secondary:hover {
       background: #b08d6d;
       color: white;
+    }#cookiePopup {
+      position: fixed;
+      bottom: -100%;
+      left: 0;
+      width: 100%;
+      background: #ffffff;
+      color: #333;
+      padding: 25px;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
+      z-index: 10000;
+      transition: bottom 0.5s ease-in-out;
+      border-top: 4px solid #b08d6d;
     }
+    #cookiePopup.active { bottom: 0; }
+    
+    .cookie-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .btn-accept-cookie { background: #2d0a0a; color: white; border: none; padding: 12px 25px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-refuse-cookie { background: #ce1212; color: white; border: none; padding: 12px 25px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    
+    /* Overlay pour bloquer l'écran si le popup est là */
+    #cookieOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 9999;
+      backdrop-filter: blur(3px);
+    }
+    #cookieOverlay.active { display: block; }
+   
+
   </style>
 </head>
 <body>
-
+ <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'client'): ?>
+  <div id="cookieOverlay"></div>
+  <div id="cookiePopup">
+    <div class="cookie-container">
+      <div class="cookie-text">
+        <strong style="font-size: 1.2rem; display: block; margin-bottom: 5px;">Consentement des Cookies</strong>
+        Pour continuer vos achats sur Atelier, vous devez accepter l'utilisation des cookies pour votre session.
+      </div>
+      <div class="cookie-buttons">
+        <button onclick="handleCookieConsent(true)" class="btn-accept-cookie">J'accepte</button>
+        <button onclick="handleCookieConsent(false)" class="btn-refuse-cookie">Je refuse et je quitte</button>
+      </div>
+    </div>
+  </div>
+<?php endif; ?>
   <header class="store-header">
     <div class="store-header-content">
       <div class="store-logo">
@@ -473,6 +526,70 @@
   </footer>
 
 <script>
+  const userId = "<?php echo isset($_SESSION['id']) ? $_SESSION['id'] : 'guest'; ?>";
+    const cookieName = "atelier_consent_user_" + userId;
+
+    function setCookie(name, value, days) {
+        let date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        document.cookie = name + "=" + value + "; expires=" + date.toUTCString() + "; path=/";
+    }
+
+    function getCookie(name) {
+        let nameEQ = name + "=";
+        let ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    function handleCookieConsent(accepted) {
+        if (accepted) {
+            // On enregistre le consentement spécifiquement pour CET utilisateur
+            setCookie(cookieName, "accepted", 30);
+            document.getElementById("cookiePopup").classList.remove("active");
+            document.getElementById("cookieOverlay").classList.remove("active");
+        } else {
+            alert("Vous devez accepter les cookies pour utiliser ce site. Vous allez être redirigé.");
+            window.location.href = "Client/logout.php"; 
+        }
+    }
+
+    window.addEventListener("load", function() {
+        const popup = document.getElementById("cookiePopup");
+        const overlay = document.getElementById("cookieOverlay");
+        
+        // On vérifie le cookie spécifique à l'ID de l'utilisateur
+        if (popup && !getCookie(cookieName)) {
+            setTimeout(() => {
+                popup.classList.add("active");
+                overlay.classList.add("active");
+            }, 500);
+        }
+    });
+
+    // --- Gardez votre fonction de filtrage en dessous ---
+    function filterProducts() {
+      const category = document.getElementById("categorie").value;
+      const searchTerm = document.getElementById("searchBar").value.trim();
+      const prixRange = document.getElementById("prixFilter").value;
+
+      let url = "recherche.php?";
+      if (category) url += "categorie=" + encodeURIComponent(category) + "&";
+      if (searchTerm) url += "query=" + encodeURIComponent(searchTerm) + "&";
+      if (prixRange) url += "prix=" + encodeURIComponent(prixRange);
+
+      fetch(url)
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("section2").innerHTML = data;
+        })
+        .catch(error => console.error('Erreur de filtrage:', error));
+    }
+
     function filterProducts() {
       const category = document.getElementById("categorie").value;
       const searchTerm = document.getElementById("searchBar").value.trim();
