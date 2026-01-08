@@ -420,10 +420,14 @@ if (isset($_GET['id'])) {
             <div class="product-detail-container">
                 <nav class="product-breadcrumb">
                     <a href="index1.php" class="breadcrumb-link">
-                        <i class="fas fa-home"></i> Accueil
+                     Accueil
                     </a>
                     <span style="color: var(--muted-foreground); margin: 0 0.5rem;">/</span>
-                    <a href="index1.php" class="breadcrumb-link">
+                    <a href="ProductList.php" class="breadcrumb-link">
+                     Produits
+                    </a>
+                    <span style="color: var(--muted-foreground); margin: 0 0.5rem;">/</span>
+                    <a href="ProductList.php" class="breadcrumb-link">
                         ' . htmlspecialchars($row['categorie']) . '
                     </a>
                     <span style="color: var(--muted-foreground); margin: 0 0.5rem;">/</span>
