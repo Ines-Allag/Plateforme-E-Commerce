@@ -47,44 +47,11 @@ include('config.php'); ?>
       background-color: rgba(255,255,255,0.1);
     }
 
-    /* Filtres */
-    .filters {
-      max-width: 1200px;
-      margin: 1rem auto;
-      padding: 1rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      align-items: center;
-      justify-content: left;
-      background-color: var(--card);
-    }
-
-    .filters select, .filters input, .filters button {
-      min-width: 250px;
-      padding: 0.75rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      font-size: 1rem;
-    }
-
-    .filters button {
-      min-width: 150px;
-      background-color: var(--primary);
-      color: var(--primary-foreground);
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .filters button:hover {
-      background-color: var(--accent-foreground);
-    }
-
     /* Hero Section */
     .hero-section {
       position: relative;
       height: 700px; 
-      background: linear-gradient(to right, rgba(0, 0, 0, 0.09) 0%, transparent 0%), url('imgs/banner.png');
+      background: linear-gradient(to right, rgba(0, 0, 0, 0.09) 0%, transparent 0%), url('imgs/banner1.png');
       background-size: cover;
       background-position: center;
       background-attachment: fixed; 
@@ -227,7 +194,7 @@ include('config.php'); ?>
       gap: 2rem;
     }
 
-/* Assure que toutes les cartes ont la même hauteur */
+    /* Assure que toutes les cartes ont la même hauteur */
     .product-card {
         display: flex;
         flex-direction: column;
@@ -265,7 +232,7 @@ include('config.php'); ?>
     .view-details {
         display: inline-block;
         padding: 0.8rem 1.5rem;
-        background-color: #2d0a0a; /* Marron très foncé/noir */
+        background-color: var(--primary); /* Marron très foncé/noir */
         color: white !important;
         text-decoration: none;
         border-radius: 4px;
@@ -323,7 +290,8 @@ include('config.php'); ?>
     .btn-secondary:hover {
       background: #b08d6d;
       color: white;
-    }#cookiePopup {
+    }
+    #cookiePopup {
       position: fixed;
       bottom: -100%;
       left: 0;
@@ -417,9 +385,8 @@ include('config.php'); ?>
         <img src="imgs/Atelier-white.png" alt="Atelier Logo" class="hero-logo">
         
         <p class="hero-subtitle">Every woman different on her way</p>
-        
         <button class="hero-btn" onclick="window.location.href='ProductList.php'">
-          Discover our products
+          Découvrir nos produits
         </button>
       </div>
     </section>
