@@ -2,7 +2,6 @@
 session_start();
 
 // STEP 1: Check if admin is logged in
-// This prevents non-admin users from accessing this page
 if (!isset($_SESSION['nom_utilisateur']) || $_SESSION['role'] !== 'admin') {
     header("Location: index.php?error=Accès non autorisé");
     exit();
@@ -11,9 +10,8 @@ if (!isset($_SESSION['nom_utilisateur']) || $_SESSION['role'] !== 'admin') {
 include('../config.php');
 
 // STEP 2: Handle DELETE action
-// When admin clicks "Delete" button, this code runs
 if (isset($_GET['delete_id'])) {
-    $delete_id = intval($_GET['delete_id']); // Convert to integer for security
+    $delete_id = intval($_GET['delete_id']);
     
     // Get product info first (to delete images from server)
     $query = "SELECT image1, image2, image3 FROM produits WHERE id = ?";
@@ -26,7 +24,7 @@ if (isset($_GET['delete_id'])) {
         // Delete image files from server
         foreach (['image1', 'image2', 'image3'] as $img) {
             if (!empty($product[$img]) && file_exists("../" . $product[$img])) {
-                @unlink("../" . $product[$img]); // @ suppresses errors if file doesn't exist
+                @unlink("../" . $product[$img]);
             }
         }
         
@@ -50,9 +48,9 @@ $search = isset($_GET['search']) ? mysqli_real_escape_string($con, trim($_GET['s
 $category_filter = isset($_GET['category']) ? mysqli_real_escape_string($con, $_GET['category']) : '';
 
 // STEP 4: Build SQL query with filters
-$query = "SELECT * FROM produits WHERE 1=1"; // 1=1 makes it easier to add conditions
+$query = "SELECT * FROM produits WHERE 1=1";
 
-// Add search condition (searches in product name)
+// Add search condition
 if (!empty($search)) {
     $query .= " AND nom LIKE '%$search%'";
 }
@@ -62,7 +60,7 @@ if (!empty($category_filter)) {
     $query .= " AND categorie = '$category_filter'";
 }
 
-// Order by: low stock first (so admin sees urgent items), then by name
+// Order by: low stock first, then by name
 $query .= " ORDER BY quantite_stock ASC, nom ASC";
 
 $result = mysqli_query($con, $query);
@@ -91,162 +89,165 @@ $stats = mysqli_fetch_assoc($stats_result);
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     body {
-      background-color: var(--background);
-      font-family: var(--font-sans);
-      margin: 0;
-      padding: 0;
-    }
-
-    .admin-container {
+      background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, black) 100%);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* HEADER STYLES */
-    .admin-header {
-      background-color: var(--primary);
-      color: var(--primary-foreground);
-      padding: 1rem 0;
-      box-shadow: var(--shadow);
-    }
-
-    .admin-header-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1600px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
-
-    .admin-logo img {
-      height: 35px;
-      width: auto;
-    }
-
-    .admin-nav ul {
-      display: flex;
-      gap: 1.5rem;
-      align-items: center;
-      list-style: none;
       margin: 0;
       padding: 0;
     }
 
-    .admin-nav a {
-      color: var(--primary-foreground);
-      padding: 0.5rem 1rem;
-      border-radius: var(--radius);
-      transition: background-color 0.2s ease;
-      font-weight: 500;
-      text-decoration: none;
+    .dashboard-container {
+      display: flex;
+      min-height: 100vh;
     }
 
-    .admin-nav a:hover {
-      background-color: rgba(255, 255, 255, 0.1);
+    /* Sidebar Navigation - Same as Dashboard */
+    .sidebar {
+      width: 280px;
+      background-color: #3B000B;
+      padding: 2rem 0;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
     }
 
-    /* PAGE HEADER */
-    .page-header {
-      background-color: var(--card);
-      padding: 2rem;
+    .sidebar-header {
+      padding: 0 2rem 1rem;
+      border-bottom: 0.5px solid var(--border);
       margin-bottom: 2rem;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-logo img {
+      height: 45px;
+    }
+
+    .admin-info {
+      padding: 1rem;
+      border-radius: var(--radius);
+      color: var(--primary-foreground);
+    }
+
+    .admin-info p {
+      font-size: 0.75rem;
+      opacity: 0.9;
+      margin-bottom: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .admin-info .admin-name {
+      font-size: 1.125rem;
+      font-weight: 700;
+      font-family: var(--font-serif);
+    }
+
+    .sidebar-nav {
+      padding: 0 1rem;
+    }
+
+    .nav-item {
+      margin-bottom: 0.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      color: var(--background);
+      text-decoration: none;
+      border-radius: var(--radius);
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      background-color: rgba(255,255,255,0.1);
+      color: var(--background);
+      transform: translateX(8px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-link.active {
+      background: rgba(255,255,255,0.1);
+      color: var(--accent);
+      box-shadow: var(--shadow-md);
+    }
+
+    .nav-link i {
+      font-size: 1.25rem;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 2.5rem;
+      background-color: var(--background);
+    }
+
+    .page-header {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
       border-bottom: 1px solid var(--border);
     }
 
     .page-header h1 {
       font-family: var(--font-serif);
-      font-size: 2rem;
-      color: var(--foreground);
-      margin: 0 0 0.5rem 0;
+      font-size: 2.75rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      font-weight: 700;
     }
 
     .page-header p {
       color: var(--muted-foreground);
-      margin: 0;
+      font-size: 1.125rem;
     }
 
-    /* MAIN CONTENT */
-    .main-content {
-      max-width: 1600px;
-      margin: 0 auto;
-      padding: 0 2rem 3rem;
-      width: 100%;
-    }
-
-    /* ALERTS (success/error messages) */
+    /* Alerts */
     .alert {
-      padding: 1rem;
+      padding: 1rem 1.5rem;
       border-radius: var(--radius);
       margin-bottom: 1.5rem;
       font-size: 0.875rem;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
     }
 
     .alert-success {
-      background-color: color-mix(in srgb, #10b981 15%, transparent);
-      color: #10b981;
-      border-left: 4px solid #10b981;
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #34d399;
     }
 
     .alert-error {
-      background-color: color-mix(in srgb, var(--destructive) 15%, transparent);
-      color: var(--destructive);
-      border-left: 4px solid var(--destructive);
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
     }
 
-    /* STATISTICS CARDS */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .stat-card {
-      background-color: var(--card);
-      padding: 1.5rem;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--border);
-    }
-
-    .stat-card h3 {
-      font-size: 0.875rem;
-      color: var(--muted-foreground);
-      margin: 0 0 0.5rem 0;
-      font-weight: 500;
-    }
-
-    .stat-card .stat-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--foreground);
-    }
-
-    .stat-card .stat-icon {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .stat-products .stat-icon { color: #3b82f6; }
-    .stat-stock .stat-icon { color: #10b981; }
-    .stat-low .stat-icon { color: #ef4444; }
-
-    /* TOOLBAR (search, filter, add button) */
+    /* Toolbar */
     .toolbar {
       background-color: var(--card);
       padding: 1.5rem;
       border-radius: var(--radius);
       margin-bottom: 2rem;
-      border: 1px solid var(--border);
+      border: 0.5px solid var(--border);
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
       align-items: center;
+      box-shadow: var(--shadow-sm);
     }
 
     .search-box {
@@ -257,38 +258,47 @@ $stats = mysqli_fetch_assoc($stats_result);
 
     .search-box input {
       width: 100%;
-      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      padding: 0.875rem 1rem 0.875rem 3rem;
       border: 1px solid var(--border);
       border-radius: var(--radius);
       background-color: var(--input);
       color: var(--foreground);
       font-size: 0.875rem;
+      transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 0, 11, 0.1);
     }
 
     .search-box i {
       position: absolute;
-      left: 0.875rem;
+      left: 1rem;
       top: 50%;
       transform: translateY(-50%);
       color: var(--muted-foreground);
+      font-size: 1rem;
     }
 
     .filter-select {
-      padding: 0.75rem 1rem;
+      padding: 0.875rem 1rem;
       border: 1px solid var(--border);
       border-radius: var(--radius);
       background-color: var(--input);
       color: var(--foreground);
       font-size: 0.875rem;
-      min-width: 180px;
+      min-width: 200px;
+      font-weight: 500;
+      cursor: pointer;
     }
 
     .btn {
-      padding: 0.75rem 1.5rem;
+      padding: 0.875rem 1.5rem;
       border-radius: var(--radius);
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
       border: none;
       text-decoration: none;
       display: inline-flex;
@@ -305,38 +315,40 @@ $stats = mysqli_fetch_assoc($stats_result);
     .btn-primary:hover {
       background-color: color-mix(in srgb, var(--primary) 90%, black);
       transform: translateY(-2px);
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow-md);
     }
 
-    /* PRODUCTS TABLE */
+    /* Products Table */
     .products-table {
       background-color: var(--card);
       border-radius: var(--radius);
       overflow: hidden;
-      border: 1px solid var(--border);
+      border: 0.5px solid var(--border);
       box-shadow: var(--shadow-sm);
     }
 
     .table-header {
       display: grid;
-      grid-template-columns: 100px 2fr 1fr 1fr 1fr 200px;
-      gap: 1rem;
-      padding: 1rem 1.5rem;
+      grid-template-columns: 100px 2fr 1fr 1fr 1fr 220px;
+      gap: 1.5rem;
+      padding: 1.5rem 2rem;
       background-color: var(--muted);
       border-bottom: 1px solid var(--border);
-      font-weight: 600;
+      font-weight: 700;
       font-size: 0.875rem;
       color: var(--foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .product-row {
       display: grid;
-      grid-template-columns: 100px 2fr 1fr 1fr 1fr 200px;
-      gap: 1rem;
-      padding: 1.5rem;
+      grid-template-columns: 100px 2fr 1fr 1fr 1fr 220px;
+      gap: 1.5rem;
+      padding: 1.5rem 2rem;
       border-bottom: 1px solid var(--border);
       align-items: center;
-      transition: background-color 0.2s ease;
+      transition: all 0.3s ease;
     }
 
     .product-row:hover {
@@ -354,6 +366,7 @@ $stats = mysqli_fetch_assoc($stats_result);
       border-radius: var(--radius);
       overflow: hidden;
       border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
     }
 
     .product-image img {
@@ -365,43 +378,46 @@ $stats = mysqli_fetch_assoc($stats_result);
     .product-name {
       font-weight: 600;
       color: var(--foreground);
-      font-size: 0.95rem;
+      font-size: 1rem;
     }
 
     .product-category {
       display: inline-block;
-      padding: 0.25rem 0.75rem;
+      padding: 0.375rem 1rem;
       background-color: var(--muted);
-      border-radius: 9999px;
-      font-size: 0.75rem;
+      border-radius: 50px;
+      font-size: 0.813rem;
       color: var(--muted-foreground);
-      font-weight: 500;
+      font-weight: 600;
+      border: 1px solid var(--border);
     }
 
     .product-price {
-      font-weight: 600;
+      font-weight: 700;
       color: var(--primary);
-      font-size: 1rem;
+      font-size: 1.125rem;
+      font-family: var(--font-serif);
     }
 
     .product-stock {
-      font-weight: 600;
-      font-size: 1rem;
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--foreground);
     }
 
-    /* Low stock warning (red text) */
+    /* Low stock warning */
     .low-stock {
       color: var(--destructive);
     }
 
-    /* Product actions (edit/delete buttons) */
+    /* Product actions */
     .product-actions {
       display: flex;
       gap: 0.5rem;
     }
 
     .btn-sm {
-      padding: 0.5rem 1rem;
+      padding: 0.625rem 1rem;
       font-size: 0.813rem;
     }
 
@@ -412,6 +428,8 @@ $stats = mysqli_fetch_assoc($stats_result);
 
     .btn-secondary:hover {
       background-color: color-mix(in srgb, var(--secondary) 90%, black);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
     }
 
     .btn-danger {
@@ -421,9 +439,11 @@ $stats = mysqli_fetch_assoc($stats_result);
 
     .btn-danger:hover {
       background-color: color-mix(in srgb, var(--destructive) 90%, black);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
     }
 
-    /* Empty state (when no products found) */
+    /* Empty state */
     .empty-state {
       text-align: center;
       padding: 4rem 2rem;
@@ -432,28 +452,48 @@ $stats = mysqli_fetch_assoc($stats_result);
 
     .empty-state i {
       font-size: 4rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       color: var(--border);
     }
 
     .empty-state h3 {
       font-size: 1.25rem;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
       color: var(--foreground);
+      font-family: var(--font-serif);
     }
 
-    /* RESPONSIVE DESIGN */
+    /* Responsive */
     @media (max-width: 1200px) {
       .table-header,
       .product-row {
-        grid-template-columns: 80px 1.5fr 1fr 1fr 1fr 180px;
+        grid-template-columns: 80px 1.5fr 1fr 1fr 1fr 200px;
       }
     }
 
     @media (max-width: 968px) {
-      .admin-nav ul {
-        flex-direction: column;
-        gap: 0.5rem;
+      .sidebar {
+        width: 80px;
+      }
+
+      .sidebar-header {
+        padding: 0 1rem 2rem;
+      }
+
+      .admin-info p,
+      .admin-info .admin-name,
+      .nav-link span {
+        display: none;
+      }
+
+      .nav-link {
+        justify-content: center;
+        padding: 1rem;
+      }
+
+      .main-content {
+        margin-left: 80px;
+        padding: 1.5rem;
       }
 
       .toolbar {
@@ -464,13 +504,18 @@ $stats = mysqli_fetch_assoc($stats_result);
         width: 100%;
       }
 
+      .filter-select {
+        width: 100%;
+      }
+
       .table-header {
-        display: none; /* Hide header on mobile */
+        display: none;
       }
 
       .product-row {
         grid-template-columns: 1fr;
         gap: 1rem;
+        padding: 1.5rem;
       }
 
       .product-image {
@@ -479,40 +524,118 @@ $stats = mysqli_fetch_assoc($stats_result);
 
       .product-actions {
         justify-content: center;
+        width: 100%;
+      }
+
+      .btn-sm {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-top: 2px solid var(--border);
+        padding: 1rem 0;
+        z-index: 1000;
+      }
+
+      .sidebar-header {
+        display: none;
+      }
+
+      .sidebar-nav {
+        display: flex;
+        justify-content: space-around;
+        padding: 0;
+      }
+
+      .nav-item {
+        margin: 0;
+      }
+
+      .nav-link {
+        padding: 0.75rem 1rem;
+      }
+
+      .main-content {
+        margin-left: 0;
+        margin-bottom: 100px;
+        padding: 1rem;
+      }
+
+      .page-header h1 {
+        font-size: 2rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
-  <div class="admin-container">
-    <!-- HEADER -->
-    <header class="admin-header">
-      <div class="admin-header-content">
-        <div class="admin-logo">
-          <a href="DashboardAdmin.php">
-            <img src="../imgs/Atelier.png" alt="Atelier Logo">
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="../imgs/Atelier.png" alt="Atelier">
+        </div>
+        <div class="admin-info">
+          <p>Bienvenue,</p>
+          <div class="admin-name"><?php echo htmlspecialchars($_SESSION['nom_utilisateur']); ?></div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-item">
+          <a href="DashboardAdmin.php" class="nav-link">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
           </a>
         </div>
-        <nav class="admin-nav">
-          <ul>
-            <li><a href="DashboardAdmin.php"><i class="fas fa-home"></i> Home</a></li>
-            <li><a href="stock_management.php"><i class="fas fa-boxes"></i> Gestion Stock</a></li>
-            <li><a href="orders_management.php"><i class="fas fa-shopping-cart"></i> Commandes</a></li>
-            <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-          </ul>
-        </nav>
+        <div class="nav-item">
+          <a href="stock_management.php" class="nav-link active">
+            <i class="fas fa-boxes"></i>
+            <span>Gestion Stock</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="orders_management.php" class="nav-link">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Commandes</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="Gstock.php" class="nav-link">
+            <i class="fas fa-plus-circle"></i>
+            <span>Ajouter Produit</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="logout.php" class="nav-link">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Déconnexion</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="page-header">
+        <h1><i class="fas fa-boxes"></i> Gestion du Stock</h1>
+        <p>Gérez tous vos produits en un seul endroit</p>
       </div>
-    </header>
 
-    <!-- PAGE HEADER -->
-    <div class="page-header">
-      <h1><i class="fas fa-boxes"></i> Gestion du Stock</h1>
-      <p>Gérez tous vos produits en un seul endroit</p>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
-      <!-- SUCCESS/ERROR MESSAGES -->
+      <!-- Alerts -->
       <?php if (isset($_GET['success'])): ?>
         <div class="alert alert-success">
           <i class="fas fa-check-circle"></i>
@@ -527,26 +650,9 @@ $stats = mysqli_fetch_assoc($stats_result);
         </div>
       <?php endif; ?>
 
-      <!-- STATISTICS CARDS -->
-      <div class="stats-grid">
-        <div class="stat-card stat-products">
-          <div class="stat-icon"><i class="fas fa-box"></i></div>
-          <h3>Total Produits</h3>
-          <div class="stat-value"><?php echo $stats['total_products']; ?></div>
-        </div>
-        <div class="stat-card stat-stock">
-          <div class="stat-icon"><i class="fas fa-cubes"></i></div>
-          <h3>Articles en Stock</h3>
-          <div class="stat-value"><?php echo number_format($stats['total_stock']); ?></div>
-        </div>
-        <div class="stat-card stat-low">
-          <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
-          <h3>Stock Faible</h3>
-          <div class="stat-value"><?php echo $stats['low_stock_count']; ?></div>
-        </div>
-      </div>
 
-      <!-- TOOLBAR (Search, Filter, Add Button) -->
+
+      <!-- Toolbar -->
       <div class="toolbar">
         <form method="GET" action="stock_management.php" class="search-box">
           <i class="fas fa-search"></i>
@@ -582,7 +688,7 @@ $stats = mysqli_fetch_assoc($stats_result);
         </a>
       </div>
 
-      <!-- PRODUCTS TABLE -->
+      <!-- Products Table -->
       <?php if (mysqli_num_rows($result) > 0): ?>
         <div class="products-table">
           <div class="table-header">
@@ -623,7 +729,7 @@ $stats = mysqli_fetch_assoc($stats_result);
                 <?php echo number_format($product['prix'], 2); ?> DZD
               </div>
 
-              <!-- Stock (with low stock warning) -->
+              <!-- Stock -->
               <div class="product-stock <?php echo $product['quantite_stock'] < 5 ? 'low-stock' : ''; ?>">
                 <?php echo $product['quantite_stock']; ?>
                 <?php if ($product['quantite_stock'] < 5): ?>
@@ -631,7 +737,7 @@ $stats = mysqli_fetch_assoc($stats_result);
                 <?php endif; ?>
               </div>
 
-              <!-- Actions (Edit/Delete) -->
+              <!-- Actions -->
               <div class="product-actions">
                 <a href="Gstock.php?edit_id=<?php echo $product['id']; ?>" 
                    class="btn btn-secondary btn-sm">
@@ -648,7 +754,7 @@ $stats = mysqli_fetch_assoc($stats_result);
         </div>
 
       <?php else: ?>
-        <!-- EMPTY STATE (no products found) -->
+        <!-- Empty State -->
         <div class="empty-state">
           <i class="fas fa-box-open"></i>
           <h3>Aucun produit trouvé</h3>
@@ -659,12 +765,12 @@ $stats = mysqli_fetch_assoc($stats_result);
               Commencez par ajouter votre premier produit.
             <?php endif; ?>
           </p>
-          <a href="Gstock.php" class="btn btn-primary" style="margin-top: 1rem;">
+          <a href="Gstock.php" class="btn btn-primary" style="margin-top: 1.5rem;">
             <i class="fas fa-plus"></i> Ajouter un produit
           </a>
         </div>
       <?php endif; ?>
-    </div>
+    </main>
   </div>
 </body>
 </html>

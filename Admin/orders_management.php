@@ -67,152 +67,201 @@ $stats = mysqli_fetch_assoc($stats_result);
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     body {
-      background-color: var(--background);
-      font-family: var(--font-sans);
-      margin: 0;
-      padding: 0;
-    }
-
-    .admin-container {
+      background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, black) 100%);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .admin-header {
-      background-color: var(--primary);
-      color: var(--primary-foreground);
-      padding: 1rem 0;
-      box-shadow: var(--shadow);
-    }
-
-    .admin-header-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1600px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
-
-    .admin-logo img {
-      height: 35px;
-      width: auto;
-    }
-
-    .admin-nav ul {
-      display: flex;
-      gap: 1.5rem;
-      align-items: center;
-      list-style: none;
       margin: 0;
       padding: 0;
     }
 
-    .admin-nav a {
-      color: var(--primary-foreground);
-      padding: 0.5rem 1rem;
-      border-radius: var(--radius);
-      transition: background-color 0.2s ease;
-      font-weight: 500;
-      text-decoration: none;
+    .dashboard-container {
+      display: flex;
+      min-height: 100vh;
     }
 
-    .admin-nav a:hover {
-      background-color: rgba(255, 255, 255, 0.1);
+    /* Sidebar Navigation - Same as Dashboard */
+    .sidebar {
+      width: 280px;
+      background-color: #3B000B;
+      padding: 2rem 0;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      padding: 0 2rem 1rem;
+      border-bottom: 0.3px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-logo img {
+      height: 45px;
+    }
+
+    .admin-info {
+      padding: 1rem;
+      border-radius: var(--radius);
+      color: var(--primary-foreground);
+    }
+
+    .admin-info p {
+      font-size: 0.75rem;
+      opacity: 0.9;
+      margin-bottom: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .admin-info .admin-name {
+      font-size: 1.125rem;
+      font-weight: 700;
+      font-family: var(--font-serif);
+    }
+
+    .sidebar-nav {
+      padding: 0 1rem;
+    }
+
+    .nav-item {
+      margin-bottom: 0.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      color: var(--background);
+      text-decoration: none;
+      border-radius: var(--radius);
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      background-color: rgba(255,255,255,0.1);
+      color: var(--background);
+      transform: translateX(8px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-link.active {
+      background: rgba(255,255,255,0.1);
+      color: var(--accent);
+      box-shadow: var(--shadow-md);
+    }
+
+    .nav-link i {
+      font-size: 1.25rem;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 2.5rem;
+      background-color: var(--background);
     }
 
     .page-header {
-      background-color: var(--card);
-      padding: 2rem;
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
       border-bottom: 1px solid var(--border);
     }
 
     .page-header h1 {
       font-family: var(--font-serif);
-      font-size: 2rem;
-      color: var(--foreground);
-      margin: 0 0 0.5rem 0;
+      font-size: 2.75rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      font-weight: 700;
     }
 
     .page-header p {
       color: var(--muted-foreground);
-      margin: 0;
+      font-size: 1.125rem;
     }
 
-    .main-content {
-      max-width: 1600px;
-      margin: 0 auto;
-      padding: 0 2rem 3rem;
-      width: 100%;
-    }
-
+    /* Alerts */
     .alert {
-      padding: 1rem;
+      padding: 1rem 1.5rem;
       border-radius: var(--radius);
       margin-bottom: 1.5rem;
       font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
 
     .alert-success {
-      background-color: color-mix(in srgb, #10b981 15%, transparent);
-      color: #10b981;
-      border-left: 4px solid #10b981;
+      background: var(--sidebar-border);
+      color:var(--accent);
     }
 
     .alert-error {
-      background-color: color-mix(in srgb, var(--destructive) 15%, transparent);
-      color: var(--destructive);
-      border-left: 4px solid var(--destructive);
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
     }
 
-    /* Stats Cards */
+    /* Stats Grid */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
     }
 
     .stat-card {
       background-color: var(--card);
-      padding: 1.25rem;
+      color: var(--primary);
+      border: 0.5px solid var(--border);
       border-radius: var(--radius);
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--border);
+      padding: 1.5rem;
       text-align: center;
       cursor: pointer;
-      transition: transform 0.2s ease;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm);
+      text-decoration: none;
+      display: block;
     }
 
     .stat-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow);
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--primary);
     }
 
     .stat-card.active {
-      border: 2px solid var(--primary);
+      background-color: var(--card);
+      color:var(--accent);
     }
 
     .stat-number {
-      font-size: 2rem;
+      font-size: 2.5rem;
       font-weight: 700;
-      margin-bottom: 0.25rem;
+      font-family: var(--font-serif);
+      margin-bottom: 0.5rem;
+      line-height: 1;
     }
 
     .stat-label {
       font-size: 0.875rem;
       color: var(--muted-foreground);
-      font-weight: 500;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .stat-all .stat-number { color: #3b82f6; }
-    .stat-pending .stat-number { color: #f59e0b; }
-    .stat-confirmed .stat-number { color: #8b5cf6; }
-    .stat-shipped .stat-number { color: #06b6d4; }
-    .stat-delivered .stat-number { color: #10b981; }
-    .stat-cancelled .stat-number { color: #ef4444; }
 
     /* Orders List */
     .orders-list {
@@ -224,73 +273,86 @@ $stats = mysqli_fetch_assoc($stats_result);
     .order-card {
       background-color: var(--card);
       border-radius: var(--radius);
-      padding: 1.5rem;
-      border: 1px solid var(--border);
+      padding: 2rem;
+      border: 0.5px solid var(--border);
       box-shadow: var(--shadow-sm);
-      transition: box-shadow 0.2s ease;
+      transition: all 0.3s ease;
     }
 
     .order-card:hover {
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow-xl);
+      transform: translateY(-2px);
     }
 
     .order-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
-      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
       border-bottom: 1px solid var(--border);
     }
 
     .order-id {
-      font-size: 1.25rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      color: var(--foreground);
+      color: var(--primary);
+      font-family: var(--font-serif);
     }
 
     .order-date {
       color: var(--muted-foreground);
       font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .order-body {
       display: grid;
       grid-template-columns: 2fr 1fr;
       gap: 2rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
 
     .customer-info h4 {
       font-size: 0.875rem;
       color: var(--muted-foreground);
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
       text-transform: uppercase;
       font-weight: 600;
+      letter-spacing: 0.5px;
     }
 
     .customer-info p {
       color: var(--foreground);
-      margin: 0.25rem 0;
-      font-size: 0.9rem;
+      margin: 0.75rem 0;
+      font-size: 0.938rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
 
     .customer-info p i {
       width: 20px;
-      color: var(--primary);
+      color: var(--secondary);
+    }
+
+    .customer-info p strong {
+      font-weight: 600;
     }
 
     .order-details {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 1rem;
     }
 
     .detail-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.5rem;
+      padding: 1rem;
       background-color: var(--muted);
       border-radius: var(--radius);
     }
@@ -298,42 +360,47 @@ $stats = mysqli_fetch_assoc($stats_result);
     .detail-label {
       color: var(--muted-foreground);
       font-size: 0.875rem;
+      font-weight: 500;
     }
 
     .detail-value {
-      font-weight: 600;
+      font-weight: 700;
       color: var(--foreground);
+      font-size: 1rem;
     }
 
     .total-amount {
-      font-size: 1.5rem !important;
+      font-size: 1.75rem !important;
       color: var(--primary) !important;
+      font-family: var(--font-serif);
     }
 
     .order-actions {
       display: flex;
       gap: 1rem;
-      padding-top: 1rem;
+      padding-top: 1.5rem;
       border-top: 1px solid var(--border);
+      align-items: center;
     }
 
     .status-select {
       flex: 1;
-      padding: 0.75rem;
+      padding: 0.875rem 1rem;
       border: 1px solid var(--border);
       border-radius: var(--radius);
       background-color: var(--input);
       color: var(--foreground);
       font-size: 0.875rem;
       font-weight: 500;
+      cursor: pointer;
     }
 
     .btn {
-      padding: 0.75rem 1.5rem;
+      padding: 0.875rem 1.5rem;
       border-radius: var(--radius);
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
       border: none;
       text-decoration: none;
       display: inline-flex;
@@ -349,36 +416,49 @@ $stats = mysqli_fetch_assoc($stats_result);
 
     .btn-primary:hover {
       background-color: color-mix(in srgb, var(--primary) 90%, black);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
     }
 
     /* Status Badge */
     .status-badge {
       display: inline-block;
-      padding: 0.375rem 1rem;
-      border-radius: 9999px;
-      font-size: 0.813rem;
-      font-weight: 600;
+      padding: 0.5rem 1.25rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .status-en_attente { 
-      background-color: #fef3c7; 
-      color: #92400e; 
+    .status-en_attente {
+      background-color: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fbbf24;
     }
-    .status-confirmee { 
-      background-color: #e0e7ff; 
-      color: #4338ca; 
+
+    .status-confirmee {
+      background-color: #e0e7ff;
+      color: #4338ca;
+      border: 1px solid #818cf8;
     }
-    .status-expediee { 
-      background-color: #cffafe; 
-      color: #0e7490; 
+
+    .status-expediee {
+      background-color: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #60a5fa;
     }
-    .status-livree { 
-      background-color: #d1fae5; 
-      color: #065f46; 
+
+    .status-livree {
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #34d399;
     }
-    .status-annulee { 
-      background-color: #fee2e2; 
-      color: #991b1b; 
+
+    .status-annulee {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
     }
 
     .no-orders {
@@ -392,62 +472,164 @@ $stats = mysqli_fetch_assoc($stats_result);
 
     .no-orders i {
       font-size: 4rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       color: var(--border);
     }
 
-    @media (max-width: 968px) {
+    .no-orders h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--foreground);
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
       .order-body {
         grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 968px) {
+      .sidebar {
+        width: 80px;
+      }
+
+      .sidebar-header {
+        padding: 0 1rem 2rem;
+      }
+
+      .admin-info p,
+      .admin-info .admin-name,
+      .nav-link span {
+        display: none;
+      }
+
+      .nav-link {
+        justify-content: center;
+        padding: 1rem;
+      }
+
+      .main-content {
+        margin-left: 80px;
+        padding: 1.5rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-top: 2px solid var(--border);
+        padding: 1rem 0;
+        z-index: 1000;
+      }
+
+      .sidebar-header {
+        display: none;
+      }
+
+      .sidebar-nav {
+        display: flex;
+        justify-content: space-around;
+        padding: 0;
+      }
+
+      .nav-item {
+        margin: 0;
+      }
+
+      .nav-link {
+        padding: 0.75rem 1rem;
+      }
+
+      .main-content {
+        margin-left: 0;
+        margin-bottom: 100px;
+        padding: 1rem;
+      }
+
+      .page-header h1 {
+        font-size: 2rem;
       }
 
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
       }
 
-      .admin-nav ul {
+      .order-actions {
         flex-direction: column;
-        gap: 0.5rem;
+      }
+
+      .status-select {
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <div class="admin-container">
-    <!-- ===================================== -->
-    <!-- NAVIGATION BAR - FIXED VERSION ✅ -->
-    <!-- ===================================== -->
-    <header class="admin-header">
-      <div class="admin-header-content">
-        <div class="admin-logo">
-          <a href="DashboardAdmin.php">
-            <img src="../imgs/Atelier.png" alt="Atelier Logo">
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="../imgs/Atelier.png" alt="Atelier">
+        </div>
+        <div class="admin-info">
+          <p>Bienvenue,</p>
+          <div class="admin-name"><?php echo htmlspecialchars($_SESSION['nom_utilisateur']); ?></div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-item">
+          <a href="DashboardAdmin.php" class="nav-link">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
           </a>
         </div>
-        <nav class="admin-nav">
-          <ul>
-            <!-- Home link -->
-            <li><a href="DashboardAdmin.php"><i class="fas fa-home"></i> Home</a></li>
-            
-            <!-- ⚠️ CHANGED: Was Gstock.php, now stock_management.php -->
-            <li><a href="stock_management.php"><i class="fas fa-boxes"></i> Gestion Stock</a></li>
-            
-            <!-- Orders link (current page) -->
-            <li><a href="orders_management.php"><i class="fas fa-shopping-cart"></i> Commandes</a></li>
-            
-            <!-- Logout link -->
-            <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-          </ul>
-        </nav>
+        <div class="nav-item">
+          <a href="stock_management.php" class="nav-link">
+            <i class="fas fa-boxes"></i>
+            <span>Gestion Stock</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="orders_management.php" class="nav-link active">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Commandes</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="Gstock.php" class="nav-link">
+            <i class="fas fa-plus-circle"></i>
+            <span>Ajouter Produit</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="logout.php" class="nav-link">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Déconnexion</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="page-header">
+        <h1><i class="fas fa-shopping-cart"></i> Gestion des Commandes</h1>
+        <p>Accepter, refuser et gérer toutes les commandes clients</p>
       </div>
-    </header>
 
-    <div class="page-header">
-      <h1><i class="fas fa-shopping-cart"></i> Gestion des Commandes</h1>
-      <p>Accepter, refuser et gérer toutes les commandes clients</p>
-    </div>
-
-    <div class="main-content">
       <?php if (isset($_GET['success'])): ?>
         <div class="alert alert-success">
           <i class="fas fa-check-circle"></i> <?php echo htmlspecialchars($_GET['success']); ?>
@@ -462,41 +644,29 @@ $stats = mysqli_fetch_assoc($stats_result);
 
       <!-- Stats -->
       <div class="stats-grid">
-        <a href="orders_management.php" style="text-decoration: none;">
-          <div class="stat-card stat-all <?php echo empty($filter_status) ? 'active' : ''; ?>">
-            <div class="stat-number"><?php echo $stats['total']; ?></div>
-            <div class="stat-label">Toutes</div>
-          </div>
+        <a href="orders_management.php" class="stat-card stat-all <?php echo empty($filter_status) ? 'active' : ''; ?>">
+          <div class="stat-number"><?php echo $stats['total']; ?></div>
+          <div class="stat-label">Toutes</div>
         </a>
-        <a href="orders_management.php?status=en_attente" style="text-decoration: none;">
-          <div class="stat-card stat-pending <?php echo $filter_status === 'en_attente' ? 'active' : ''; ?>">
-            <div class="stat-number"><?php echo $stats['en_attente']; ?></div>
-            <div class="stat-label">En attente</div>
-          </div>
+        <a href="orders_management.php?status=en_attente" class="stat-card stat-pending <?php echo $filter_status === 'en_attente' ? 'active' : ''; ?>">
+          <div class="stat-number"><?php echo $stats['en_attente']; ?></div>
+          <div class="stat-label">En attente</div>
         </a>
-        <a href="orders_management.php?status=confirmee" style="text-decoration: none;">
-          <div class="stat-card stat-confirmed <?php echo $filter_status === 'confirmee' ? 'active' : ''; ?>">
-            <div class="stat-number"><?php echo $stats['confirmee']; ?></div>
-            <div class="stat-label">Confirmées</div>
-          </div>
+        <a href="orders_management.php?status=confirmee" class="stat-card stat-confirmed <?php echo $filter_status === 'confirmee' ? 'active' : ''; ?>">
+          <div class="stat-number"><?php echo $stats['confirmee']; ?></div>
+          <div class="stat-label">Confirmées</div>
         </a>
-        <a href="orders_management.php?status=expediee" style="text-decoration: none;">
-          <div class="stat-card stat-shipped <?php echo $filter_status === 'expediee' ? 'active' : ''; ?>">
-            <div class="stat-number"><?php echo $stats['expediee']; ?></div>
-            <div class="stat-label">Expédiées</div>
-          </div>
+        <a href="orders_management.php?status=expediee" class="stat-card stat-shipped <?php echo $filter_status === 'expediee' ? 'active' : ''; ?>">
+          <div class="stat-number"><?php echo $stats['expediee']; ?></div>
+          <div class="stat-label">Expédiées</div>
         </a>
-        <a href="orders_management.php?status=livree" style="text-decoration: none;">
-          <div class="stat-card stat-delivered <?php echo $filter_status === 'livree' ? 'active' : ''; ?>">
-            <div class="stat-number"><?php echo $stats['livree']; ?></div>
-            <div class="stat-label">Livrées</div>
-          </div>
+        <a href="orders_management.php?status=livree" class="stat-card stat-delivered <?php echo $filter_status === 'livree' ? 'active' : ''; ?>">
+          <div class="stat-number"><?php echo $stats['livree']; ?></div>
+          <div class="stat-label">Livrées</div>
         </a>
-        <a href="orders_management.php?status=annulee" style="text-decoration: none;">
-          <div class="stat-card stat-cancelled <?php echo $filter_status === 'annulee' ? 'active' : ''; ?>">
-            <div class="stat-number"><?php echo $stats['annulee']; ?></div>
-            <div class="stat-label">Annulées</div>
-          </div>
+        <a href="orders_management.php?status=annulee" class="stat-card stat-cancelled <?php echo $filter_status === 'annulee' ? 'active' : ''; ?>">
+          <div class="stat-number"><?php echo $stats['annulee']; ?></div>
+          <div class="stat-label">Annulées</div>
         </a>
       </div>
 
@@ -543,7 +713,7 @@ $stats = mysqli_fetch_assoc($stats_result);
 
               <!-- Actions -->
               <div class="order-actions">
-                <form method="POST" action="orders_management.php" style="flex: 1; display: flex; gap: 1rem;">
+                <form method="POST" action="orders_management.php" style="flex: 1; display: flex; gap: 1rem; align-items: center;">
                   <input type="hidden" name="commande_id" value="<?php echo $order['id']; ?>">
                   <select name="statut" class="status-select" required>
                     <option value="">Changer le statut</option>
@@ -564,11 +734,11 @@ $stats = mysqli_fetch_assoc($stats_result);
       <?php else: ?>
         <div class="no-orders">
           <i class="fas fa-inbox"></i>
-          <h2>Aucune commande trouvée</h2>
+          <h3>Aucune commande trouvée</h3>
           <p>Il n'y a pas de commandes correspondant à ce filtre</p>
         </div>
       <?php endif; ?>
-    </div>
+    </main>
   </div>
 </body>
 </html>
