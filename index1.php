@@ -1,3 +1,4 @@
+<?php include('config.php'); ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -81,16 +82,138 @@
     /* Hero Section */
     .hero-section {
       position: relative;
-      height: 500px;
-      background: url('imgs/banner1.png');
+      height: 700px; 
+      background: linear-gradient(to right, rgba(0, 0, 0, 0.09) 0%, transparent 0%), url('imgs/banner.png');
       background-size: cover;
       background-position: center;
+      background-attachment: fixed; 
+      display: flex;
+      align-items: center; 
+      justify-content: flex-start;
+      color: var(--primary-foreground);
+      padding: 0 10%;
+      z-index: 1;
+    }
+
+    .hero-content {
+      max-width: 600px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .hero-logo {
+      width: 350px; /* Adjust based on your logo size */
+      height: auto;
+    }
+
+    .hero-subtitle {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 10;
+      letter-spacing: 2px;
+      text-transform: lowercase;
+    }
+
+    .hero-btn {
+      width: fit-content;
+      padding: 1rem 2.5rem;
+      background-color: #b08d6d; /* Matches the bronze/tan color in your pic */
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .hero-btn:hover {
+      background-color: #8e7056;
+      transform: translateY(-2px);
+    }
+
+    /* About Us Section */
+    .about-section {
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 0 1rem;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 4rem;
+    }
+
+    .about-content {
+      flex: 1;
+      max-width: 40%;
+    }
+
+    .about-content p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--muted-foreground);
+      margin-bottom: 1.5rem;
+    }
+
+    .about-image {
+      flex: 1.5;
+      border-radius: var(--radius);
+      overflow: hidden;
+      max-width: 55%;
+    }
+
+    .about-image img {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    /* Quote Section */
+    .quote-section {
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('imgs/quote.png');
+      background-size: cover;
+      padding: 6rem 1rem;
       text-align: center;
       color: var(--primary-foreground);
-      margin-bottom: 3rem;
+    }
+
+    .quote-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .quote-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 2rem;
+      font-style: italic;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .quote-text::before,
+    .quote-text::after {
+      content: '"';
+      font-size: 3rem;
+      color: var(--secondary);
+      position: absolute;
+    }
+
+    .quote-text::before {
+      top: -1rem;
+      left: -2rem;
+    }
+
+    .quote-text::after {
+      bottom: -2rem;
+      right: -2rem;
+    }
+
+    .quote-author {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--secondary);
     }
 
     /* Grid produits */
@@ -103,12 +226,55 @@
       gap: 2rem;
     }
 
+/* Assure que toutes les cartes ont la même hauteur */
     .product-card {
-      background-color: var(--card);
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%; /* Important pour l'alignement */
+        background-color: var(--card);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    /* Conteneur de texte sous l'image */
+    .product-content {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1; /* Remplit l'espace vide pour pousser le bouton en bas */
+        text-align: center; /* Centre le texte comme sur votre image 2 */
+    }
+
+    .product-title {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        min-height: 3rem; /* Réserve l'espace pour 2 lignes de titre */
+    }
+
+    .product-price {
+        font-weight: bold;
+        font-size: 1.4rem;
+        color: #4a0404; /* Couleur sombre comme sur l'image */
+        margin-bottom: 1.5rem;
+    }
+
+    /* Transformation du lien en bouton sombre centré */
+    .view-details {
+        display: inline-block;
+        padding: 0.8rem 1.5rem;
+        background-color: #2d0a0a; /* Marron très foncé/noir */
+        color: white !important;
+        text-decoration: none;
+        border-radius: 4px;
+        margin: 0 auto; /* Centre le bouton */
+        width: fit-content;
+        transition: opacity 0.2s;
+    }
+
+    .view-details:hover {
+        opacity: 0.9;
     }
 
     .product-card:hover {
@@ -126,10 +292,40 @@
     .product-card:hover .product-image img {
       transform: scale(1.05);
     }
+    /* Style pour le titre de la collection */
+    .section-title {
+      text-align: center;
+      font-family: 'Libre Baskerville', serif;
+      font-size: 2.5rem;
+      margin: 4rem 0 2rem;
+      color: var(--primary);
+    }
+
+    /* Conteneur pour le bouton voir plus */
+    .view-more-container {
+      display: flex;
+      justify-content: center;
+      margin: 3rem 0;
+    }
+
+    .btn-secondary {
+      padding: 1rem 3rem;
+      border: 2px solid #b08d6d;
+      background: transparent;
+      color: #b08d6d;
+      font-weight: 600;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #b08d6d;
+      color: white;
+    }
   </style>
 </head>
 <body>
-  <?php include('config.php'); ?>
 
   <header class="store-header">
     <div class="store-header-content">
@@ -163,14 +359,36 @@
   </header>
 
   <main>
-    <!-- Hero Section -->
     <section class="hero-section">
+      <div class="hero-content">
+        <img src="imgs/Atelier-white.png" alt="Atelier Logo" class="hero-logo">
+        
+        <p class="hero-subtitle">Every woman different on her way</p>
+        
+        <button class="hero-btn" onclick="window.location.href='ProductList.php'">
+          Discover our products
+        </button>
+      </div>
+    </section>
+    <!-- About Us Section -->
+    <section class="about-section">
+      <div class="about-content">
+        <p>Depuis 2010, Atelier s'est imposé comme une référence dans l'art de l'horlogerie. Notre passion pour les mécanismes précis et l'esthétique intemporelle nous pousse à créer des pièces uniques qui racontent votre histoire.</p>
+        <p>Chaque montre est conçue avec soin par nos artisans experts, combinant savoir-faire traditionnel et innovation moderne. Nous sélectionnons uniquement les matériaux les plus nobles pour garantir qualité et durabilité.</p>
+        <p>Notre engagement va au-delà de la création d'accessoires : nous créons des héritages qui se transmettent de génération en génération.</p>
+      </div>
+      <div class="about-image">
+        <img src="imgs/about-us.png" alt="Atelier Artisanat Montres">        
+      </div>
     </section>
     
     <!-- Liste des produits -->
+    <h2 class="section-title">Nouvelle Collection</h2>
+
     <section id="section2" class="products-grid">
       <?php
-      $query = "SELECT id, nom, prix, image1, categorie FROM produits ORDER BY date_ajout DESC";
+      // Ajout de LIMIT 3 pour n'afficher que les 3 derniers produits
+      $query = "SELECT id, nom, prix, image1, categorie FROM produits ORDER BY date_ajout DESC LIMIT 3";
       $result = mysqli_query($con, $query);
 
       if (mysqli_num_rows($result) > 0) {
@@ -192,6 +410,22 @@
           echo '<p style="grid-column: 1 / -1; text-align: center; font-size: 1.2rem;">Aucune montre disponible pour le moment.</p>';
       }
       ?>
+    </section>
+
+    <div class="view-more-container">
+        <button class="btn-secondary" onclick="window.location.href='ProductList.php'">
+            Voir plus
+        </button>
+    </div>
+    
+    <!-- Quote Section -->
+    <section class="quote-section">
+      <div class="quote-container">
+        <div class="quote-text">
+          Le temps est notre bien le plus précieux. Une montre Atelier ne le mesure pas, elle le célèbre.
+        </div>
+        <div class="quote-author">— Pierre Dubois, Maître Horloger</div>
+      </div>
     </section>
   </main>
   <!-- Footer -->

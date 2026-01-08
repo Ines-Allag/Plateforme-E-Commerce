@@ -1,3 +1,4 @@
+<?php include('config.php'); ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -91,12 +92,61 @@
       gap: 2rem;
     }
 
+    /* Assure que toutes les cartes ont la même hauteur */
     .product-card {
-      background-color: var(--card);
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%; 
+    background-color: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Centre le contenu et pousse le bouton vers le bas */
+    .product-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Remplit l'espace pour aligner les boutons en bas */
+    text-align: center; /* Centre tout le texte */
+    }
+
+    /* Espace réservé pour le titre (évite les décalages si 1 ou 2 lignes) */
+    .product-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    min-height: 3rem; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+
+    .product-price {
+    font-weight: bold;
+    font-size: 1.4rem;
+    color: #4a0404; /* Couleur sombre comme l'image */
+    margin-bottom: 1.5rem;
+    }
+
+    /* Style du bouton centré */
+    .view-details {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background-color: #2d0a0a; /* Marron très foncé / Noir */
+    color: white !important;
+    text-decoration: none;
+    border-radius: 4px;
+    margin: auto auto 0 auto; /* Centre horizontalement et colle au bas */
+    width: fit-content;
+    font-weight: 500;
+    transition: opacity 0.2s;
+    }
+
+    .view-details:hover {
+    opacity: 0.9;
     }
 
     .product-card:hover {
@@ -114,6 +164,7 @@
     .product-card:hover .product-image img {
       transform: scale(1.05);
     }
+
   </style>
 </head>
 <body>
@@ -188,11 +239,11 @@
                   <a href='product_details.php?id=" . $row['id'] . "' class='product-image'>
                       <img src='" . htmlspecialchars($row['image1']) . "' alt='" . htmlspecialchars($row['nom']) . "'>
                   </a>
-                  <div class='product-content'>
-                      <h3 class='product-title'>" . htmlspecialchars($row['nom']) . "</h3>
-                      <p class='product-price'>" . number_format($row['prix'], 2) . " DZD</p>
-                      <a href='product_details.php?id=" . $row['id'] . "' class='view-details'>Voir les détails</a>
-                  </div>
+                    <div class='product-content'>
+                        <h3 class='product-title'>" . htmlspecialchars($row['nom']) . "</h3>
+                        <p class='product-price'>" . number_format($row['prix'], 2) . " DZD</p>
+                        <a href='product_details.php?id=" . $row['id'] . "' class='view-details'>Voir les détails</a>
+                    </div>
               </div>
               ";
           }
