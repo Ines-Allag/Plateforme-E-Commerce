@@ -1,145 +1,178 @@
+<?php include('../config.php'); ?>
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-	<title>SIGN UP</title>
-	<link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription - Atelier</title>
+  <link rel="stylesheet" href="../global.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Utilisation du même style que la page login (index.php) */
+    .signup-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary) 0%, #1a0005 100%);
+      padding: 2rem 1rem;
+    }
+
+    .signup-card {
+      background-color: var(--card);
+      padding: 2.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-xl);
+      width: 100%;
+      max-width: 500px;
+      border: 1px solid var(--border);
+    }
+
+    .signup-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .signup-header h1 {
+      font-family: 'Libre Baskerville', serif;
+      color: var(--primary);
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .signup-header p {
+      color: var(--muted-foreground);
+      font-size: 0.9rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--foreground);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background-color: var(--input);
+      transition: border-color 0.2s, ring 0.2s;
+    }
+
+    .form-group input:focus {
+	  border-color: var(--ring);
+      box-shadow: 0 0 0 2px var(--ring);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-top: 1rem;
+    }
+
+    .btn-submit:hover {
+      opacity: 0.9;
+    }
+
+    .error-message {
+      background-color: #fee2e2;
+      color: #dc2626;
+      padding: 0.75rem;
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      text-align: center;
+    }
+
+    .success-message {
+      background-color: #d1fae5;
+      color: #059669;
+      padding: 0.75rem;
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      text-align: center;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .login-link a {
+      color: var(--primary);
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-     <form action="signup-check.php" method="post">
-     	<h2>SIGN UP</h2>
-     	<?php if (isset($_GET['error'])) { ?>
-     		<p class="error"><?php echo $_GET['error']; ?></p>
-     	<?php } ?>
+  <div class="signup-container">
+    <div class="signup-card">
+      <div class="signup-header">
+        <h1>Créer un compte</h1>
+        <p>Rejoignez l'Atelier pour une expérience unique</p>
+      </div>
 
-          <?php if (isset($_GET['success'])) { ?>
-               <p class="success"><?php echo $_GET['success']; ?></p>
-          <?php } ?>
+      <form action="signup-check.php" method="post">
+        
+        <?php if (isset($_GET['error'])) { ?>
+            <div class="error-message"><?php echo htmlspecialchars($_GET['error']); ?></div>
+        <?php } ?>
 
-          <label>Name</label>
-          <?php if (isset($_GET['name'])) { ?>
-               <input type="text" 
-                      name="name" 
-                      placeholder="Name"
-                      value="<?php echo $_GET['name']; ?>"><br>
-          <?php }else{ ?>
-               <input type="text" 
-                      name="name" 
-                      placeholder="Name"><br>
-          <?php }?>
+        <?php if (isset($_GET['success'])) { ?>
+            <div class="success-message"><?php echo htmlspecialchars($_GET['success']); ?></div>
+        <?php } ?>
 
-          <label>User Name</label>
-          <?php if (isset($_GET['uname'])) { ?>
-               <input type="text" 
-                      name="uname" 
-                      placeholder="User Name"
-                      value="<?php echo $_GET['uname']; ?>"><br>
-          <?php }else{ ?>
-               <input type="text" 
-                      name="uname" 
-                      placeholder="User Name"><br>
-          <?php }?>
+        <div class="form-group">
+          <label>Nom complet</label>
+          <input type="text" name="name" placeholder="Votre nom" 
+                 value="<?php echo isset($_GET['name']) ? htmlspecialchars($_GET['name']) : ''; ?>">
+        </div>
 
+        <div class="form-group">
+          <label>Nom d'utilisateur</label>
+          <input type="text" name="uname" placeholder="Identifiant"
+                 value="<?php echo isset($_GET['uname']) ? htmlspecialchars($_GET['uname']) : ''; ?>">
+        </div>
 
-     	<label>Password</label>
-     	<input type="password" 
-                 name="password" 
-                 placeholder="Password"><br>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" name="password" placeholder="••••••••">
+        </div>
 
-          <label>Re Password</label>
-          <input type="password" 
-                 name="re_password" 
-                 placeholder="Re_Password"><br>
+        <div class="form-group">
+          <label>Confirmer le mot de passe</label>
+          <input type="password" name="re_password" placeholder="••••••••">
+        </div>
 
-     	<button type="submit">Sign Up</button>
-          <a href="index.php" class="ca">Already have an account?</a>
-     </form>
+        <button type="submit" class="btn-submit">S'inscrire</button>
+      </form>
+
+      <div class="login-link">
+        <p>Déjà un compte ? <a href="index.php">Se connecter</a></p>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
-<style>
-     body {
-	background: #008b4a;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100vh;
-	flex-direction: column;
-}
-
-*{
-	font-family: sans-serif;
-	box-sizing: border-box;
-}
-
-form {
-	width: 500px;
-	border: 2px solid #ccc;
-	padding: 30px;
-	background: #fff;
-	border-radius: 15px;
-}
-
-h2 {
-	text-align: center;
-	margin-bottom: 40px;
-}
-
-input {
-	display: block;
-	border: 2px solid #ccc;
-	width: 95%;
-	padding: 10px;
-	margin: 10px auto;
-	border-radius: 5px;
-}
-label {
-	color: #888;
-	font-size: 18px;
-	padding: 10px;
-}
-
-button {
-	float: right;
-	background: #555;
-	padding: 10px 15px;
-	color: #fff;
-	border-radius: 5px;
-	margin-right: 10px;
-	border: none;
-}
-button:hover{
-	opacity: .7;
-}
-.error {
-   background: #F2DEDE;
-   color: #A94442;
-   padding: 10px;
-   width: 95%;
-   border-radius: 5px;
-   margin: 20px auto;
-}
-
-.success {
-   background: #D4EDDA;
-   color: #40754C;
-   padding: 10px;
-   width: 95%;
-   border-radius: 5px;
-   margin: 20px auto;
-}
-
-h1 {
-	text-align: center;
-	color: #fff;
-}
-
-.ca {
-	font-size: 14px;
-	display: inline-block;
-	padding: 10px;
-	text-decoration: none;
-	color: #444;
-}
-.ca:hover {
-	text-decoration: underline;
-} 
-</style>
