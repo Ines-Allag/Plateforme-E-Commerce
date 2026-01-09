@@ -18,12 +18,11 @@ if (!empty($searchTerm)) {
     
     setcookie($cookieName, implode('|', $history), time() + (86400 * 30), "/");
 }
-// Récupérer les filtres AJAX
+
 $selectedCategory = isset($_GET['categorie']) ? mysqli_real_escape_string($con, $_GET['categorie']) : '';
 $searchTerm = isset($_GET['query']) ? mysqli_real_escape_string($con, $_GET['query']) : '';
 $prixRange = isset($_GET['prix']) ? $_GET['prix'] : '';
 
-// Construire WHERE
 $whereClauses = [];
 
 
@@ -74,7 +73,6 @@ if (mysqli_num_rows($result) > 0) {
 ?>
 
 <style>
-    /* On copie le style essentiel de index1.php pour que ça reste identique après filtrage */
     .product-card {
         background-color: var(--card);
         border-radius: var(--radius);

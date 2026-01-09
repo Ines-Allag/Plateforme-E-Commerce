@@ -9,41 +9,66 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* Header boutique */
+
     .store-header {
-      background-color: var(--primary);
-      color: var(--primary-foreground);
-      padding: 0.75rem 0;
-      box-shadow: var(--shadow);
+    background-color: #2d0a0a; 
+    color: white;
+    padding: 1.5rem 0;
+    box-shadow: var(--shadow);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; 
+    }
+
+    main {
+    padding-top: 120px; 
     }
 
     .store-header-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1200px;
-      margin: 15px 50px;
-      padding: 0 1rem;
-      gap: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 4rem;
     }
 
     .store-logo img {
-      height: 35px; 
-      width: auto;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+    height: 45px;
+    width: auto;
+    }
+
+    .store-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
     }
 
     .store-nav a {
-      color: var(--primary-foreground);
-      padding: 0.5rem 1rem;
-      border-radius: var(--radius);
-      transition: background-color 0.2s ease;
+    color: white;
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 400;
+    transition: opacity 0.2s;
     }
 
     .store-nav a:hover {
-      background-color: rgba(255,255,255,0.1);
+    opacity: 0.8;
+    }
+
+    .nav-cart {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    margin-left: 1.5rem;
+    }
+
+    .nav-cart i {
+    font-size: 1.1rem;
     }
 
     .filters {
@@ -83,7 +108,6 @@
       background-color: var(--accent-foreground);
     }
 
-    /* Conteneur pour la barre de recherche et l'historique */
     .search-container {
       position: relative;
       flex: 1;
@@ -146,7 +170,6 @@
       font-size: 0.9rem;
     }
 
-    /* Grid produits */
     .products-grid {
       max-width: 1200px;
       margin: 2rem auto;
@@ -188,17 +211,17 @@
     .product-price {
       font-weight: bold;
       font-size: 1.4rem;
-      color: #4a0404;
+      color: var(--primary);
       margin-bottom: 1.5rem;
     }
 
     .view-details {
       display: inline-block;
       padding: 0.8rem 1.5rem;
-      background-color: #2d0a0a;
+      background-color: var(--primary);
       color: white !important;
       text-decoration: none;
-      border-radius: 4px;
+      border-radius: 1px;
       margin: auto auto 0 auto;
       width: fit-content;
       font-weight: 500;
@@ -226,35 +249,43 @@
     }
   </style>
 </head>
-<body>
-  <header class="store-header">
-    <div class="store-header-content">
-      <div class="store-logo">
-        <a href="index1.php">
-          <img src="imgs/Atelier.png" alt="Atelier Logo">
-        </a>
-      </div>
 
-      <nav class="store-nav">
+<body>
+    <header class="store-header">
+    <div class="store-header-content">
+        <div class="store-logo">
+        <a href="index1.php">
+            <img src="imgs/Atelier.png" alt="Atelier Logo">
+        </a>
+        </div>
+
+        <nav class="store-nav">
         <a href="index1.php">Accueil</a>
         <a href="ProductList.php">Produits</a>
-        <a href="panier/view_cart.php">Panier</a>
-        <a href="panier/mes_commandes.php">Mes commandes</a>
+        
+        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'client'): ?>
+            <a href="panier/mes_commandes.php">Mes commandes</a>
+            <a href="panier/view_cart.php" class="nav-cart">
+            <i class="fas fa-shopping-cart"></i>Panier
+            </a>
+        <?php endif; ?>
+
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-          <a href="Admin/DashboardAdmin.php">Administration</a>
+            <a href="Admin/DashboardAdmin.php">Administration</a>
         <?php endif; ?>
+
         <?php if (isset($_SESSION['nom_utilisateur'])): ?>
-          <?php if ($_SESSION['role'] === 'admin'): ?>
+            <?php if ($_SESSION['role'] === 'admin'): ?>
             <a href="Admin/logout.php">Déconnexion (<?= htmlspecialchars($_SESSION['nom_utilisateur']) ?>)</a>
-          <?php else: ?>
+            <?php else: ?>
             <a href="Client/logout.php">Déconnexion (<?= htmlspecialchars($_SESSION['nom_utilisateur']) ?>)</a>
-          <?php endif; ?>
+            <?php endif; ?>
         <?php else: ?>
-          <a href="Client/index.php">Connexion</a>
+            <a href="Client/index.php">Connexion</a>
         <?php endif; ?>
-      </nav>
+        </nav>
     </div>
-  </header>
+    </header>
 
   <main>    
     <!-- Filtres -->
@@ -264,7 +295,6 @@
         <input type="text" id="searchBar" placeholder="Rechercher une montre..." autocomplete="off">
         <div id="searchHistory" class="search-history">
           <?php
-          // Récupérer l'historique depuis les cookies
           $userId = isset($_SESSION['id']) ? $_SESSION['id'] : 'guest';
           $cookieName = 'search_history_' . $userId;
           $history = isset($_COOKIE[$cookieName]) ? explode('|', $_COOKIE[$cookieName]) : [];
@@ -380,19 +410,16 @@
     const searchBar = document.getElementById("searchBar");
     const searchHistory = document.getElementById("searchHistory");
 
-    // Afficher l'historique quand on focus sur la barre de recherche
     searchBar.addEventListener("focus", function() {
       searchHistory.classList.add("show");
     });
 
-    // Cacher l'historique quand on clique ailleurs
     document.addEventListener("click", function(event) {
       if (!event.target.closest('.search-container')) {
         searchHistory.classList.remove("show");
       }
     });
 
-    // Sélectionner un élément de l'historique
     function selectHistoryItem(term) {
       searchBar.value = term;
       searchHistory.classList.remove("show");

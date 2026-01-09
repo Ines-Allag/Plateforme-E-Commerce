@@ -10,44 +10,67 @@ include('config.php'); ?>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* Header boutique */
+
     .store-header {
-      background-color: var(--primary);
-      color: var(--primary-foreground);
-      padding: 0.75rem 0;
+      background-color: #2d0a0a; 
+      color: white;
+      padding: 1.5rem 0;
       box-shadow: var(--shadow);
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000; 
+    }
+
+    main {
+      padding-top: 80px; 
     }
 
     .store-header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      max-width: 1200px;
-      margin: 15px 50px;
-      padding: 0 1rem;
-      gap: 0.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 4rem;
     }
 
     .store-logo img {
-      height: 35px; 
+      height: 45px;
       width: auto;
+    }
+
+    .store-nav {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 1.5rem;
     }
 
     .store-nav a {
-      color: var(--primary-foreground);
-      padding: 0.5rem 1rem;
-      border-radius: var(--radius);
-      transition: background-color 0.2s ease;
+      color: white;
+      text-decoration: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      transition: opacity 0.2s;
     }
 
     .store-nav a:hover {
-      background-color: rgba(255,255,255,0.1);
+      opacity: 0.8;
     }
 
-    /* Hero Section */
+    .nav-cart {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      margin-left: 1.5rem;
+    }
+
+    .nav-cart i {
+      font-size: 1.1rem;
+    }
     .hero-section {
       position: relative;
       height: 700px; 
@@ -72,7 +95,7 @@ include('config.php'); ?>
     }
 
     .hero-logo {
-      width: 350px; /* Adjust based on your logo size */
+      width: 350px;
       height: auto;
     }
 
@@ -87,7 +110,7 @@ include('config.php'); ?>
     .hero-btn {
       width: fit-content;
       padding: 1rem 2.5rem;
-      background-color: #b08d6d; /* Matches the bronze/tan color in your pic */
+      background-color: var(--secondary); 
       color: white;
       border: none;
       border-radius: var(--radius);
@@ -101,7 +124,6 @@ include('config.php'); ?>
       transform: translateY(-2px);
     }
 
-    /* About Us Section */
     .about-section {
       max-width: 1200px;
       margin: 4rem auto;
@@ -136,8 +158,30 @@ include('config.php'); ?>
       object-fit: cover;
       transition: transform 0.5s ease;
     }
+    
+    @media (max-width: 992px) {
+      .about-section {
+        flex-direction: column;
+        gap: 2rem;
+        text-align: center;
+      }
 
-    /* Quote Section */
+      .about-content {
+        max-width: 100%;
+        order: 1; 
+      }
+
+      .about-image {
+        max-width: 100%; 
+        order: 2; 
+      }
+
+      .about-image img {
+        height: auto;
+        max-height: 400px;
+      }
+    }
+
     .quote-section {
       background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('imgs/quote.png');
       background-size: cover;
@@ -184,7 +228,6 @@ include('config.php'); ?>
       color: var(--secondary);
     }
 
-    /* Grid produits */
     .products-grid {
       max-width: 1200px;
       margin: 2rem auto;
@@ -194,11 +237,10 @@ include('config.php'); ?>
       gap: 2rem;
     }
 
-    /* Assure que toutes les cartes ont la même hauteur */
     .product-card {
         display: flex;
         flex-direction: column;
-        height: 100%; /* Important pour l'alignement */
+        height: 100%; 
         background-color: var(--card);
         border-radius: var(--radius);
         border: 1px solid var(--border);
@@ -206,37 +248,35 @@ include('config.php'); ?>
         transition: transform 0.3s ease;
     }
 
-    /* Conteneur de texte sous l'image */
     .product-content {
         padding: 1.5rem;
         display: flex;
         flex-direction: column;
-        flex-grow: 1; /* Remplit l'espace vide pour pousser le bouton en bas */
-        text-align: center; /* Centre le texte comme sur votre image 2 */
+        flex-grow: 1; 
+        text-align: center; 
     }
 
     .product-title {
         font-size: 1.2rem;
         margin-bottom: 0.5rem;
-        min-height: 3rem; /* Réserve l'espace pour 2 lignes de titre */
+        min-height: 3rem; 
     }
 
     .product-price {
         font-weight: bold;
         font-size: 1.4rem;
-        color: #4a0404; /* Couleur sombre comme sur l'image */
+        color: #4a0404; 
         margin-bottom: 1.5rem;
     }
 
-    /* Transformation du lien en bouton sombre centré */
     .view-details {
         display: inline-block;
         padding: 0.8rem 1.5rem;
-        background-color: var(--primary); /* Marron très foncé/noir */
+        background-color: var(--primary); 
         color: white !important;
         text-decoration: none;
-        border-radius: 4px;
-        margin: 0 auto; /* Centre le bouton */
+        border-radius: 1px;
+        margin: 0 auto;
         width: fit-content;
         transition: opacity 0.2s;
     }
@@ -260,7 +300,6 @@ include('config.php'); ?>
     .product-card:hover .product-image img {
       transform: scale(1.05);
     }
-    /* Style pour le titre de la collection */
     .section-title {
       text-align: center;
       font-family: 'Libre Baskerville', serif;
@@ -269,7 +308,6 @@ include('config.php'); ?>
       color: var(--primary);
     }
 
-    /* Conteneur pour le bouton voir plus */
     .view-more-container {
       display: flex;
       justify-content: center;
@@ -282,7 +320,7 @@ include('config.php'); ?>
       background: transparent;
       color: #b08d6d;
       font-weight: 600;
-      border-radius: var(--radius);
+      border-radius: 1px var(--radius);
       cursor: pointer;
       transition: all 0.3s ease;
     }
@@ -318,7 +356,6 @@ include('config.php'); ?>
     .btn-accept-cookie { background: #2d0a0a; color: white; border: none; padding: 12px 25px; border-radius: 4px; cursor: pointer; font-weight: bold; }
     .btn-refuse-cookie { background: #ce1212; color: white; border: none; padding: 12px 25px; border-radius: 4px; cursor: pointer; font-weight: bold; }
     
-    /* Overlay pour bloquer l'écran si le popup est là */
     #cookieOverlay {
       display: none;
       position: fixed;
@@ -359,22 +396,27 @@ include('config.php'); ?>
       <nav class="store-nav">
         <a href="index1.php">Accueil</a>
         <a href="ProductList.php">Produits</a>
+        
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'client'): ?>
-        <a href="panier/view_cart.php"><i class="fas fa-shopping-cart"></i>Panier </a>
-        <a href="panier/mes_commandes.php">Mes commandes </a>
+          <a href="panier/mes_commandes.php">Mes commandes</a>
+          <a href="panier/view_cart.php" class="nav-cart">
+            <i class="fas fa-shopping-cart"></i>Panier
+          </a>
         <?php endif; ?>
+
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
           <a href="Admin/DashboardAdmin.php">Administration</a>
         <?php endif; ?>
-       <?php if (isset($_SESSION['nom_utilisateur'])): ?>
-    <?php if ($_SESSION['role'] === 'admin'): ?>
-        <a href="Admin/logout.php">Déconnexion (<?= htmlspecialchars($_SESSION['nom_utilisateur']) ?>)</a>
-    <?php else: ?>
-        <a href="Client/logout.php">Déconnexion (<?= htmlspecialchars($_SESSION['nom_utilisateur']) ?>)</a>
-    <?php endif; ?>
-<?php else: ?>
-    <a href="Client/index.php">Connexion</a>
-<?php endif; ?>
+
+        <?php if (isset($_SESSION['nom_utilisateur'])): ?>
+          <?php if ($_SESSION['role'] === 'admin'): ?>
+            <a href="Admin/logout.php">Déconnexion (<?= htmlspecialchars($_SESSION['nom_utilisateur']) ?>)</a>
+          <?php else: ?>
+            <a href="Client/logout.php">Déconnexion (<?= htmlspecialchars($_SESSION['nom_utilisateur']) ?>)</a>
+          <?php endif; ?>
+        <?php else: ?>
+          <a href="Client/index.php">Connexion</a>
+        <?php endif; ?>
       </nav>
     </div>
   </header>
@@ -393,7 +435,7 @@ include('config.php'); ?>
     <!-- About Us Section -->
     <section class="about-section">
       <div class="about-content">
-        <p>Depuis 2010, Atelier s'est imposé comme une référence dans l'art de l'horlogerie. Notre passion pour les mécanismes précis et l'esthétique intemporelle nous pousse à créer des pièces uniques qui racontent votre histoire.</p>
+        <p>Depuis 2006, Atelier s'est imposé comme une référence dans l'art de l'horlogerie. Notre passion pour les mécanismes précis et l'esthétique intemporelle nous pousse à créer des pièces uniques qui racontent votre histoire.</p>
         <p>Chaque montre est conçue avec soin par nos artisans experts, combinant savoir-faire traditionnel et innovation moderne. Nous sélectionnons uniquement les matériaux les plus nobles pour garantir qualité et durabilité.</p>
         <p>Notre engagement va au-delà de la création d'accessoires : nous créons des héritages qui se transmettent de génération en génération.</p>
       </div>
@@ -407,7 +449,6 @@ include('config.php'); ?>
 
     <section id="section2" class="products-grid">
       <?php
-      // Ajout de LIMIT 3 pour n'afficher que les 3 derniers produits
       $query = "SELECT id, nom, prix, image1, categorie FROM produits ORDER BY date_ajout DESC LIMIT 3";
       $result = mysqli_query($con, $query);
 
@@ -515,7 +556,6 @@ include('config.php'); ?>
 
     function handleCookieConsent(accepted) {
         if (accepted) {
-            // On enregistre le consentement spécifiquement pour CET utilisateur
             setCookie(cookieName, "accepted", 30);
             document.getElementById("cookiePopup").classList.remove("active");
             document.getElementById("cookieOverlay").classList.remove("active");
@@ -528,8 +568,7 @@ include('config.php'); ?>
     window.addEventListener("load", function() {
         const popup = document.getElementById("cookiePopup");
         const overlay = document.getElementById("cookieOverlay");
-        
-        // On vérifie le cookie spécifique à l'ID de l'utilisateur
+
         if (popup && !getCookie(cookieName)) {
             setTimeout(() => {
                 popup.classList.add("active");
