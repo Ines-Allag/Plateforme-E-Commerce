@@ -9,6 +9,7 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id'];
 
+// Récupérer les données du panier avec l'image stockée dans la table panier
 $stmt = $con->prepare("
     SELECT c.quantite, c.prix, c.produit_id, c.image, p.nom, 
            (c.quantite * c.prix) as total 
@@ -97,12 +98,21 @@ $result = $stmt->get_result();
             height: 80px;
             border-radius: var(--radius);
             overflow: hidden;
+            background-color: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .product-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .product-image .img-placeholder {
+            font-size: 2rem;
+            color: var(--muted-foreground);
         }
 
         .product-details h3 {
@@ -404,7 +414,13 @@ $result = $stmt->get_result();
                     <div class="cart-item">
                         <div class="product-info">
                             <div class="product-image">
-                                <img src="<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['nom']); ?>">
+                                <?php if (!empty($row['image'])): ?>
+                                    <img src="../<?php echo htmlspecialchars($row['image']); ?>" 
+                                         alt="<?php echo htmlspecialchars($row['nom']); ?>"
+                                         onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-watch img-placeholder\'></i>';">
+                                <?php else: ?>
+                                    <i class="fas fa-watch img-placeholder"></i>
+                                <?php endif; ?>
                             </div>
                             <div class="product-details">
                                 <h3><?php echo htmlspecialchars($row['nom']); ?></h3>

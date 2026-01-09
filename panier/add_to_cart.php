@@ -21,33 +21,42 @@ if (isset($_POST['produit_id']) && isset($_POST['quantite']) && isset($_POST['pr
         exit();
     }
 
-    // Récupérer l'image correspondante depuis la table `produits`
-    $query_image = "SELECT image1 FROM produits WHERE id = $produit_id";
-    $result_image = mysqli_query($con, $query_image);
+    // Récupérer l'image1 depuis la table produits
+    $stmt_image = $con->prepare("SELECT image1 FROM produits WHERE id = ?");
+    $stmt_image->bind_param("i", $produit_id);
+    $stmt_image->execute();
+    $result_image = $stmt_image->get_result();
 
-    if ($row_image = mysqli_fetch_assoc($result_image)) {
-        $img = $row_image['image1'];
-    } else {
+    if ($result_image->num_rows == 0) {
         header("Location: ../index1.php?error=Produit introuvable");
         exit();
     }
 
-    // Ajouter ou mettre à jour le produit dans la table `panier`
-    $check_query = "SELECT * FROM panier WHERE utilisateur_id = $user_id AND produit_id = $produit_id";
-    $result = mysqli_query($con, $check_query);
+    $row_image = $result_image->fetch_assoc();
+    $image = $row_image['image1'];
+    $stmt_image->close();
 
-    if (mysqli_num_rows($result) > 0) {
-        // Si le produit existe déjà dans le panier, mettre à jour la quantité
-        $update_query = "UPDATE panier 
-                         SET quantite = quantite + $quantite 
-                         WHERE utilisateur_id = $user_id AND produit_id = $produit_id";
-        mysqli_query($con, $update_query);
+    // Vérifier si le produit existe déjà dans le panier
+    $check_stmt = $con->prepare("SELECT * FROM panier WHERE utilisateur_id = ? AND produit_id = ?");
+    $check_stmt->bind_param("ii", $user_id, $produit_id);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
+
+    if ($check_result->num_rows > 0) {
+        // Si le produit existe déjà, mettre à jour la quantité
+        $update_stmt = $con->prepare("UPDATE panier SET quantite = quantite + ? WHERE utilisateur_id = ? AND produit_id = ?");
+        $update_stmt->bind_param("iii", $quantite, $user_id, $produit_id);
+        $update_stmt->execute();
+        $update_stmt->close();
     } else {
-        // Insérer un nouveau produit dans le panier avec l'image
-        $insert_query = "INSERT INTO panier (utilisateur_id, produit_id, quantite, prix, image) 
-                         VALUES ($user_id, $produit_id, $quantite, $prix, '$img')";
-        mysqli_query($con, $insert_query);
+        // Insérer un nouveau produit dans le panier AVEC l'image récupérée
+        $insert_stmt = $con->prepare("INSERT INTO panier (utilisateur_id, produit_id, quantite, prix, image) VALUES (?, ?, ?, ?, ?)");
+        $insert_stmt->bind_param("iiids", $user_id, $produit_id, $quantite, $prix, $image);
+        $insert_stmt->execute();
+        $insert_stmt->close();
     }
+
+    $check_stmt->close();
 
     // Redirection vers la page du panier
     header("Location: view_cart.php?success=Produit ajouté au panier");
