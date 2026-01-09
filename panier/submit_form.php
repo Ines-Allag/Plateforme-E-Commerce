@@ -34,7 +34,7 @@ $con->begin_transaction();
 try {
     // Récupérer les articles du panier
     $stmt = $con->prepare("
-        SELECT c.produit_id, c.quantite, c.prix, p.nom
+        SELECT c.produit_id, c.quantite, c.prix, p.nom, p.quantite_stock
         FROM panier c
         JOIN produits p ON c.produit_id = p.id
         WHERE c.utilisateur_id = ?
@@ -47,10 +47,15 @@ try {
         throw new Exception("Votre panier est vide");
     }
 
-    // Calculer le total
+    // Calculer le total et vérifier le stock
     $total = 0;
     $items = [];
     while ($item = $cart_items->fetch_assoc()) {
+        // Vérifier si le stock est suffisant
+        if ($item['quantite'] > $item['quantite_stock']) {
+            throw new Exception("Stock insuffisant pour " . $item['nom'] . ". Disponible: " . $item['quantite_stock']);
+        }
+        
         $total += $item['prix'] * $item['quantite'];
         $items[] = $item;
     }
@@ -73,8 +78,12 @@ try {
         INSERT INTO details_commande (commande_id, produit_id, nom_produit, quantite, prix_unitaire)
         VALUES (?, ?, ?, ?, ?)
     ");
+    
+    // *** AJOUT : Préparer la requête de mise à jour du stock ***
+    $stmt_update_stock = $con->prepare("UPDATE produits SET quantite_stock = quantite_stock - ? WHERE id = ?");
 
     foreach ($items as $item) {
+        // Insérer le détail de commande
         $stmt_details->bind_param("iisid", 
             $commande_id, 
             $item['produit_id'], 
@@ -85,6 +94,13 @@ try {
         
         if (!$stmt_details->execute()) {
             throw new Exception("Erreur lors de l'ajout des détails de la commande");
+        }
+        
+        // *** MISE À JOUR DU STOCK - C'EST LE FIX ! ***
+        $stmt_update_stock->bind_param("ii", $item['quantite'], $item['produit_id']);
+        
+        if (!$stmt_update_stock->execute()) {
+            throw new Exception("Erreur lors de la mise à jour du stock pour " . $item['nom']);
         }
     }
 
