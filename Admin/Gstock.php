@@ -355,20 +355,23 @@ $categories_result = mysqli_query($con, $categories_query);
     }
 
     .btn-primary:hover {
-      background-color: color-mix(in srgb, var(--primary) 90%, black);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+    opacity: 0.9;
     }
 
     .btn-secondary {
-      background-color: var(--secondary);
-      color: var(--secondary-foreground);
+      padding: 1rem 3rem;
+      border: 2px solid #b08d6d;
+      background: transparent;
+      color: #b08d6d;
+      font-weight: 600;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
     .btn-secondary:hover {
-      background-color: color-mix(in srgb, var(--secondary) 90%, black);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-sm);
+      background: #b08d6d;
+      color: white;
     }
 
     /* Responsive */

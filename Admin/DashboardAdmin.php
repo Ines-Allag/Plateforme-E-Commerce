@@ -294,18 +294,16 @@ $top_products = mysqli_query($con, $top_products_query);
       font-family: var(--font-serif);
     }
 
+
     .section-link {
-      color: var(--secondary);
-      text-decoration: none;
-      font-size: 0.938rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.3s ease;
       padding: 0.5rem 1rem;
+      border: 1px solid #b08d6d;
+      background: transparent;
+      color: #b08d6d;
+      font-weight: 600;
       border-radius: var(--radius);
-      border: 1px solid var(--secondary);
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
     .section-link:hover {
@@ -498,7 +496,7 @@ $top_products = mysqli_query($con, $top_products_query);
       margin-bottom: 0.5rem;
     }
 
-    /* Two Column Layout */
+    
     .two-column {
       display: grid;
       grid-template-columns: 1fr 1fr;

@@ -78,7 +78,7 @@ $stats = mysqli_fetch_assoc($stats_result);
       min-height: 100vh;
     }
 
-    /* Sidebar Navigation - Same as Dashboard */
+    
     .sidebar {
       width: 280px;
       background-color: #3B000B;
@@ -385,14 +385,13 @@ $stats = mysqli_fetch_assoc($stats_result);
 
     .status-select {
       flex: 1;
-      padding: 0.875rem 1rem;
+      max-width: 100%;
+      padding: 0.875rem 1rem 0.875rem 1rem;
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background-color: var(--input);
-      color: var(--foreground);
+      align-items: start;
+      background-color: var(--muted);
       font-size: 0.875rem;
-      font-weight: 500;
-      cursor: pointer;
+
     }
 
     .btn {
@@ -415,9 +414,7 @@ $stats = mysqli_fetch_assoc($stats_result);
     }
 
     .btn-primary:hover {
-      background-color: color-mix(in srgb, var(--primary) 90%, black);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+    opacity: 0.9;
     }
 
     /* Status Badge */

@@ -261,36 +261,25 @@ $stats = mysqli_fetch_assoc($stats_result);
       padding: 0.875rem 1rem 0.875rem 3rem;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      background-color: var(--input);
-      color: var(--foreground);
       font-size: 0.875rem;
       transition: all 0.3s ease;
     }
-
-    .search-box input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(59, 0, 11, 0.1);
-    }
-
     .search-box i {
       position: absolute;
       left: 1rem;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--muted-foreground);
       font-size: 1rem;
     }
 
     .filter-select {
-      padding: 0.875rem 1rem;
+      max-width: 100%;
+      padding: 0.875rem 1rem 0.875rem 1rem;
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background-color: var(--input);
-      color: var(--foreground);
+      align-items: start;
+      background-color: transparent; 
       font-size: 0.875rem;
-      min-width: 200px;
-      font-weight: 500;
-      cursor: pointer;
+
     }
 
     .btn {
@@ -311,11 +300,9 @@ $stats = mysqli_fetch_assoc($stats_result);
       background-color: var(--primary);
       color: var(--primary-foreground);
     }
-
+    
     .btn-primary:hover {
-      background-color: color-mix(in srgb, var(--primary) 90%, black);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+    opacity: 0.9;
     }
 
     /* Products Table */
@@ -395,7 +382,7 @@ $stats = mysqli_fetch_assoc($stats_result);
     .product-price {
       font-weight: 700;
       color: var(--primary);
-      font-size: 1.125rem;
+      font-size: 1.1rem;
       font-family: var(--font-serif);
     }
 
@@ -422,23 +409,36 @@ $stats = mysqli_fetch_assoc($stats_result);
     }
 
     .btn-secondary {
-      background-color: var(--secondary);
-      color: var(--secondary-foreground);
+      padding: 0.5rem 1rem;
+      border: 1px solid #b08d6d;
+      background: transparent;
+      color: #b08d6d;
+      font-weight: 600;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
     .btn-secondary:hover {
-      background-color: color-mix(in srgb, var(--secondary) 90%, black);
-      transform: translateY(-2px);
+      color: white;
+      background-color: solid #b08d6d;
       box-shadow: var(--shadow-sm);
     }
 
     .btn-danger {
-      background-color: var(--destructive);
-      color: var(--destructive-foreground);
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--destructive);
+      background: transparent;
+      color: var(--destructive);
+      font-weight: 600;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
     .btn-danger:hover {
       background-color: color-mix(in srgb, var(--destructive) 90%, black);
+      color: white;
       transform: translateY(-2px);
       box-shadow: var(--shadow-sm);
     }
