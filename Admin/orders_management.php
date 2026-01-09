@@ -715,10 +715,10 @@ $stats = mysqli_fetch_assoc($stats_result);
                   <select name="statut" class="status-select" required>
                     <option value="">Changer le statut</option>
                     <option value="en_attente" <?php echo $order['statut'] === 'en_attente' ? 'selected' : ''; ?>>En attente</option>
-                    <option value="confirmee" <?php echo $order['statut'] === 'confirmee' ? 'selected' : ''; ?>>✅ Confirmer</option>
-                    <option value="expediee" <?php echo $order['statut'] === 'expediee' ? 'selected' : ''; ?>>📦 Expédier</option>
-                    <option value="livree" <?php echo $order['statut'] === 'livree' ? 'selected' : ''; ?>>✔️ Livrer</option>
-                    <option value="annulee" <?php echo $order['statut'] === 'annulee' ? 'selected' : ''; ?>>❌ Annuler</option>
+                    <option value="confirmee" <?php echo $order['statut'] === 'confirmee' ? 'selected' : ''; ?>>Confirmer</option>
+                    <option value="expediee" <?php echo $order['statut'] === 'expediee' ? 'selected' : ''; ?>>Expédier</option>
+                    <option value="livree" <?php echo $order['statut'] === 'livree' ? 'selected' : ''; ?>>Livrer</option>
+                    <option value="annulee" <?php echo $order['statut'] === 'annulee' ? 'selected' : ''; ?>>Annuler</option>
                   </select>
                   <button type="submit" name="update_status" class="btn btn-primary">
                     <i class="fas fa-save"></i> Mettre à jour
