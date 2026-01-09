@@ -28,19 +28,22 @@ function uploadImage($file, $index) {
         return ['error' => "L'image $index est trop volumineuse (max 5MB)"];
     }
     
-    // Créer le dossier s'il n'existe pas
-    $upload_dir = "../imgs/produits/";
+    // 🎯 CORRECTION : Upload directement dans imgs/
+    $upload_dir = "../imgs/";
+    
+    // Créer UNIQUEMENT le dossier imgs/ s'il n'existe pas (PAS produits/)
     if (!is_dir($upload_dir)) {
         mkdir($upload_dir, 0755, true);
     }
     
-    // Générer un nom unique
+    // Générer un nom unique pour éviter les conflits
     $unique_name = uniqid() . '_' . time() . '.' . $file_extension;
     $destination = $upload_dir . $unique_name;
     
     // Déplacer le fichier
     if (move_uploaded_file($file['tmp_name'], $destination)) {
-        return $destination;
+        // ✅ Retourner le chemin RELATIF pour la base de données
+        return "imgs/" . $unique_name;
     } else {
         return ['error' => "Erreur lors de l'upload de l'image $index"];
     }
@@ -158,8 +161,11 @@ if (isset($_POST['modifier'])) {
             }
             
             // Supprimer l'ancienne image si elle existe
-            if (!empty($images[$i]) && file_exists($images[$i])) {
-                @unlink($images[$i]);
+            if (!empty($images[$i])) {
+                $old_file_path = "../" . $images[$i];
+                if (file_exists($old_file_path) && $images[$i] !== 'imgs/default.jpg') {
+                    @unlink($old_file_path);
+                }
             }
             
             $images[$i] = $upload_result;

@@ -190,7 +190,7 @@ $top_products = mysqli_query($con, $top_products_query);
 
     .stat-card {
       background-color: var(--card);
-      //border: 0.5px solid var(--border);
+      /*border: 0.5px solid var(--border);*/
       border-radius: var(--radius);
       padding: 2rem;
       position: relative;
@@ -271,7 +271,7 @@ $top_products = mysqli_query($con, $top_products_query);
     /* Dashboard Sections */
     .dashboard-section {
       background-color: var(--card);
-      //border: 0.8px solid var(--border);
+      /*border: 0.8px solid var(--border);*/
       border-radius: var(--radius);
       padding: 2rem;
       margin-bottom: 2rem;
@@ -284,7 +284,7 @@ $top_products = mysqli_query($con, $top_products_query);
       align-items: center;
       margin-bottom: 2rem;
       padding-bottom: 1.5rem;
-      //border-bottom: 1px solid var(--border);
+      /*border-bottom: 1px solid var(--border);*/
     }
 
     .section-title {
@@ -404,7 +404,7 @@ $top_products = mysqli_query($con, $top_products_query);
       border-radius: var(--radius);
       overflow: hidden;
       transition: all 0.3s ease;
-      //box-shadow: var(--shadow-sm);
+      /*box-shadow: var(--shadow-sm);*/
     }
 
     .product-card:hover {
