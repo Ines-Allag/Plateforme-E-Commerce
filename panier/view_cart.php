@@ -483,7 +483,7 @@ $result = $stmt->get_result();
         <?php endif; ?>
     </div>
 
-    <!-- Checkout Modal -->
+    <!-- confirmation de la commande et paiement -->
     <div class="modal-overlay" id="checkoutModal">
         <div class="modal">
             <div class="modal-header">

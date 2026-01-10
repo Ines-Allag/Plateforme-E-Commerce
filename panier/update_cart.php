@@ -2,7 +2,7 @@
 session_start();
 include('../config.php');
 
-// Vérification de la connexion utilisateur
+// Vérification de la connexion du user
 if (!isset($_SESSION['id'])) {
     header("Location: ../Client/index.php?error=Veuillez vous connecter");
     exit();
@@ -40,7 +40,7 @@ if (isset($_POST['quantite']) && isset($_POST['produit_id'])) {
             $stmt->bind_param("iii", $quantite, $user_id, $produit_id);
             $stmt->execute();
 
-            // Redirection vers le panier avec un message de succès
+            // Redirection avec un message de succès
             header("Location: view_cart.php?success=Quantité mise à jour");
             exit();
         } else {

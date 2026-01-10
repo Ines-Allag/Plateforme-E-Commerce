@@ -333,7 +333,6 @@ include('config.php');
       color: white;
     }
 
-    /* Styles pour la bannière de cookies */
     #cookiePopup {
       position: fixed;
       bottom: -100%;
@@ -386,7 +385,6 @@ include('config.php');
       background: #1a0505;
     }
 
-    /* Nouveau bouton pour les cookies essentiels uniquement */
     .btn-essential-cookie {
       background: #6b7280;
       color: white;
@@ -402,7 +400,6 @@ include('config.php');
       background: #4b5563;
     }
     
-    /* Overlay sombre derrière la bannière */
     #cookieOverlay {
       display: none;
       position: fixed;
@@ -419,7 +416,6 @@ include('config.php');
       display: block; 
     }
 
-    /* Responsive pour mobile */
     @media (max-width: 768px) {
       .cookie-container {
         flex-direction: column;
@@ -440,7 +436,7 @@ include('config.php');
   </style>
 </head>
 <body>
-  <!-- Bannière de consentement des cookies - affichée uniquement pour les clients connectés -->
+  <!-- Bannière des cookies: pour les clients connectés uniquement -->
   <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'client'): ?>
     <div id="cookieOverlay"></div>
     <div id="cookiePopup">
@@ -507,7 +503,7 @@ include('config.php');
   </header>
 
   <main>
-    <!-- Section hero avec image de fond -->
+    <!-- Section hero -->
     <section class="hero-section">
       <div class="hero-content">
         <img src="imgs/Atelier-white.png" alt="Atelier Logo" class="hero-logo">
@@ -518,7 +514,7 @@ include('config.php');
       </div>
     </section>
 
-    <!-- Section À propos -->
+    <!-- Section about us -->
     <section class="about-section">
       <div class="about-content">
         <p>Depuis 2006, Atelier s'est imposé comme une référence dans l'art de l'horlogerie. Notre passion pour les mécanismes précis et l'esthétique intemporelle nous pousse à créer des pièces uniques qui racontent votre histoire.</p>
@@ -530,13 +526,11 @@ include('config.php');
       </div>
     </section>
     
-    <!-- Titre de section -->
     <h2 id="produitList" class="section-title">Nouvelle Collection</h2>
 
-    <!-- Grille de produits - affiche les 3 derniers produits ajoutés -->
+    <!-- produits:affiche les 3 derniers produits ajoutés -->
     <section id="section2" class="products-grid">
       <?php
-      // Récupération des 3 produits les plus récents depuis la base de données
       $query = "SELECT id, nom, prix, image1, categorie FROM produits ORDER BY date_ajout DESC LIMIT 3";
       $result = mysqli_query($con, $query);
 
@@ -561,7 +555,7 @@ include('config.php');
       ?>
     </section>
 
-    <!-- Bouton pour voir plus de produits -->
+    <!-- Bouton pour voir plus de produits qui mène vers la liste des produits -->
     <div class="view-more-container">
         <button class="btn-secondary" onclick="window.location.href='ProductList.php'">
             Voir plus
@@ -579,7 +573,7 @@ include('config.php');
     </section>
   </main>
 
-  <!-- Pied de page -->
+  <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
       <div class="footer-grid">
@@ -624,15 +618,13 @@ include('config.php');
   </footer>
 
 <script>
-  // Récupération de l'ID utilisateur pour personnaliser le cookie de consentement
+  // Récupération de l'ID user pour personnaliser le cookies de consentement
   const userId = "<?php echo isset($_SESSION['id']) ? $_SESSION['id'] : 'guest'; ?>";
   const cookieName = "atelier_consent_user_" + userId;
 
-  // Fonction pour créer un cookie avec une date d'expiration
   function setCookie(name, value, days) {
       let date = new Date();
       date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-      // On ajoute SameSite=Lax pour la sécurité
       document.cookie = name + "=" + value + "; expires=" + date.toUTCString() + "; path=/; SameSite=Lax";
   }
 
@@ -650,30 +642,23 @@ include('config.php');
 
   // Gestion du consentement de l'utilisateur
   function handleCookieConsent(type) {
-      // L'utilisateur peut choisir "all" (tous les cookies) ou "essential" (essentiels uniquement)
       if (type === 'all') {
-          // On enregistre le choix pour 1 an
           setCookie(cookieName, "all", 365);
-          console.log("✅ Tous les cookies acceptés");
+          console.log("Tous les cookies acceptés");
       } else if (type === 'essential') {
-          // Même avec ce choix, on enregistre la préférence
           setCookie(cookieName, "essential", 365);
-          console.log("✅ Cookies essentiels uniquement");
+          console.log("Cookies essentiels uniquement");
       }
       
-      // Dans les deux cas, on ferme la bannière - l'utilisateur peut continuer
       document.getElementById("cookiePopup").classList.remove("active");
       document.getElementById("cookieOverlay").classList.remove("active");
   }
 
-  // Au chargement de la page, on vérifie si l'utilisateur a déjà fait son choix
   window.addEventListener("load", function() {
       const popup = document.getElementById("cookiePopup");
       const overlay = document.getElementById("cookieOverlay");
 
-      // Si la bannière existe ET que l'utilisateur n'a pas encore choisi
       if (popup && !getCookie(cookieName)) {
-          // Petit délai de 500ms pour pas que ça apparaisse trop brutalement
           setTimeout(() => {
               popup.classList.add("active");
               overlay.classList.add("active");
@@ -681,7 +666,6 @@ include('config.php');
       }
   });
 
-  // Fonction de filtrage des produits (conservée de l'ancien code)
   function filterProducts() {
       const category = document.getElementById("categorie") ? document.getElementById("categorie").value : "";
       const searchTerm = document.getElementById("searchBar") ? document.getElementById("searchBar").value.trim() : "";
@@ -692,7 +676,6 @@ include('config.php');
       if (searchTerm) url += "query=" + encodeURIComponent(searchTerm) + "&";
       if (prixRange) url += "prix=" + encodeURIComponent(prixRange);
 
-      // Appel AJAX pour récupérer les produits filtrés
       fetch(url)
           .then(response => response.text())
           .then(data => {
@@ -704,7 +687,6 @@ include('config.php');
           .catch(error => console.error('Erreur lors du filtrage:', error));
   }
 
-  // Si la barre de recherche existe, on écoute la touche Entrée
   const searchBar = document.getElementById("searchBar");
   if (searchBar) {
       searchBar.addEventListener("keyup", function(event) {

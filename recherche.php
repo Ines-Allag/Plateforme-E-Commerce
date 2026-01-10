@@ -4,7 +4,7 @@ include('config.php');
 $searchTerm = isset($_GET['query']) ? mysqli_real_escape_string($con, $_GET['query']) : '';
 $userId = isset($_SESSION['id']) ? $_SESSION['id'] : 'guest'; // On récupère l'ID
 
-//  HISTORIQUE PAR CLIENT
+//  Historique des recherches dans les cookies
 if (!empty($searchTerm)) {
     $cookieName = 'search_history_' . $userId; 
     $history = isset($_COOKIE[$cookieName]) ? explode('|', $_COOKIE[$cookieName]) : [];
@@ -41,7 +41,6 @@ if ($prixRange !== '') {
 
 $whereClause = count($whereClauses) > 0 ? "WHERE " . implode(" AND ", $whereClauses) : "";
 
-// Requête finale
 $query = "SELECT id, nom, prix, image1 FROM produits $whereClause ORDER BY date_ajout DESC";
 $result = mysqli_query($con, $query);
 
