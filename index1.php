@@ -1,5 +1,7 @@
-<?php session_start(); 
-include('config.php'); ?>
+<?php 
+session_start(); 
+include('config.php'); 
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -10,7 +12,6 @@ include('config.php'); ?>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-
     .store-header {
       background-color: #2d0a0a; 
       color: white;
@@ -71,6 +72,7 @@ include('config.php'); ?>
     .nav-cart i {
       font-size: 1.1rem;
     }
+
     .hero-section {
       position: relative;
       height: 700px; 
@@ -300,6 +302,7 @@ include('config.php'); ?>
     .product-card:hover .product-image img {
       transform: scale(1.05);
     }
+
     .section-title {
       text-align: center;
       font-family: 'Libre Baskerville', serif;
@@ -329,6 +332,8 @@ include('config.php'); ?>
       background: #b08d6d;
       color: white;
     }
+
+    /* Styles pour la bannière de cookies */
     #cookiePopup {
       position: fixed;
       bottom: -100%;
@@ -342,7 +347,10 @@ include('config.php'); ?>
       transition: bottom 0.5s ease-in-out;
       border-top: 4px solid #b08d6d;
     }
-    #cookiePopup.active { bottom: 0; }
+
+    #cookiePopup.active { 
+      bottom: 0; 
+    }
     
     .cookie-container {
       max-width: 1200px;
@@ -352,39 +360,116 @@ include('config.php'); ?>
       align-items: center;
       gap: 20px;
     }
+
+    .cookie-text {
+      flex: 1;
+    }
+
+    .cookie-buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
     
-    .btn-accept-cookie { background: #2d0a0a; color: white; border: none; padding: 12px 25px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-    .btn-refuse-cookie { background: #ce1212; color: white; border: none; padding: 12px 25px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-accept-cookie { 
+      background: #2d0a0a; 
+      color: white; 
+      border: none; 
+      padding: 12px 25px; 
+      border-radius: 4px; 
+      cursor: pointer; 
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+
+    .btn-accept-cookie:hover {
+      background: #1a0505;
+    }
+
+    /* Nouveau bouton pour les cookies essentiels uniquement */
+    .btn-essential-cookie {
+      background: #6b7280;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+
+    .btn-essential-cookie:hover {
+      background: #4b5563;
+    }
     
+    /* Overlay sombre derrière la bannière */
     #cookieOverlay {
       display: none;
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%;
       background: rgba(0,0,0,0.5);
       z-index: 9999;
       backdrop-filter: blur(3px);
     }
-    #cookieOverlay.active { display: block; }
-   
 
+    #cookieOverlay.active { 
+      display: block; 
+    }
+
+    /* Responsive pour mobile */
+    @media (max-width: 768px) {
+      .cookie-container {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .cookie-buttons {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .btn-accept-cookie,
+      .btn-essential-cookie {
+        flex: 1;
+        min-width: 140px;
+      }
+    }
   </style>
 </head>
 <body>
- <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'client'): ?>
-  <div id="cookieOverlay"></div>
-  <div id="cookiePopup">
-    <div class="cookie-container">
-      <div class="cookie-text">
-        <strong style="font-size: 1.2rem; display: block; margin-bottom: 5px;">Consentement des Cookies</strong>
-        Pour continuer vos achats sur Atelier, vous devez accepter l'utilisation des cookies pour votre session.
-      </div>
-      <div class="cookie-buttons">
-        <button onclick="handleCookieConsent(true)" class="btn-accept-cookie">J'accepte</button>
-        <button onclick="handleCookieConsent(false)" class="btn-refuse-cookie">Je refuse et je quitte</button>
+  <!-- Bannière de consentement des cookies - affichée uniquement pour les clients connectés -->
+  <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'client'): ?>
+    <div id="cookieOverlay"></div>
+    <div id="cookiePopup">
+      <div class="cookie-container">
+        <div class="cookie-text">
+          <strong style="font-size: 1.2rem; display: block; margin-bottom: 8px;">
+            <i class="fas fa-cookie-bite"></i> Utilisation des Cookies
+          </strong>
+          <p style="margin-bottom: 10px;">
+            Nous utilisons des <strong>cookies essentiels</strong> pour gérer votre session et votre panier d'achat. 
+            Ces cookies sont nécessaires au bon fonctionnement du site.
+          </p>
+          <p style="font-size: 0.9rem; opacity: 0.9;">
+            Vous pouvez continuer à naviguer avec uniquement les cookies essentiels si vous le souhaitez.
+          </p>
+        </div>
+        <div class="cookie-buttons">
+          <button onclick="handleCookieConsent('all')" class="btn-accept-cookie">
+            J'accepte tous les cookies
+          </button>
+          <button onclick="handleCookieConsent('essential')" class="btn-essential-cookie">
+            Cookies essentiels uniquement
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-<?php endif; ?>
+  <?php endif; ?>
+
+  <!-- En-tête du site -->
   <header class="store-header">
     <div class="store-header-content">
       <div class="store-logo">
@@ -422,17 +507,18 @@ include('config.php'); ?>
   </header>
 
   <main>
+    <!-- Section hero avec image de fond -->
     <section class="hero-section">
       <div class="hero-content">
         <img src="imgs/Atelier-white.png" alt="Atelier Logo" class="hero-logo">
-        
         <p class="hero-subtitle">Every woman different on her way</p>
         <button class="hero-btn" onclick="window.location.href='ProductList.php'">
           Découvrir nos produits
         </button>
       </div>
     </section>
-    <!-- About Us Section -->
+
+    <!-- Section À propos -->
     <section class="about-section">
       <div class="about-content">
         <p>Depuis 2006, Atelier s'est imposé comme une référence dans l'art de l'horlogerie. Notre passion pour les mécanismes précis et l'esthétique intemporelle nous pousse à créer des pièces uniques qui racontent votre histoire.</p>
@@ -444,11 +530,13 @@ include('config.php'); ?>
       </div>
     </section>
     
-    <!-- Liste des produits -->
+    <!-- Titre de section -->
     <h2 id="produitList" class="section-title">Nouvelle Collection</h2>
 
+    <!-- Grille de produits - affiche les 3 derniers produits ajoutés -->
     <section id="section2" class="products-grid">
       <?php
+      // Récupération des 3 produits les plus récents depuis la base de données
       $query = "SELECT id, nom, prix, image1, categorie FROM produits ORDER BY date_ajout DESC LIMIT 3";
       $result = mysqli_query($con, $query);
 
@@ -473,13 +561,14 @@ include('config.php'); ?>
       ?>
     </section>
 
+    <!-- Bouton pour voir plus de produits -->
     <div class="view-more-container">
         <button class="btn-secondary" onclick="window.location.href='ProductList.php'">
             Voir plus
         </button>
     </div>
     
-    <!-- Quote Section -->
+    <!-- Section citation -->
     <section class="quote-section">
       <div class="quote-container">
         <div class="quote-text">
@@ -489,7 +578,8 @@ include('config.php'); ?>
       </div>
     </section>
   </main>
-  <!-- Footer -->
+
+  <!-- Pied de page -->
   <footer class="footer">
     <div class="footer-container">
       <div class="footer-grid">
@@ -534,91 +624,95 @@ include('config.php'); ?>
   </footer>
 
 <script>
+  // Récupération de l'ID utilisateur pour personnaliser le cookie de consentement
   const userId = "<?php echo isset($_SESSION['id']) ? $_SESSION['id'] : 'guest'; ?>";
-    const cookieName = "atelier_consent_user_" + userId;
+  const cookieName = "atelier_consent_user_" + userId;
 
-    function setCookie(name, value, days) {
-        let date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        document.cookie = name + "=" + value + "; expires=" + date.toUTCString() + "; path=/";
-    }
+  // Fonction pour créer un cookie avec une date d'expiration
+  function setCookie(name, value, days) {
+      let date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      // On ajoute SameSite=Lax pour la sécurité
+      document.cookie = name + "=" + value + "; expires=" + date.toUTCString() + "; path=/; SameSite=Lax";
+  }
 
-    function getCookie(name) {
-        let nameEQ = name + "=";
-        let ca = document.cookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-        }
-        return null;
-    }
+  // Fonction pour lire un cookie existant
+  function getCookie(name) {
+      let nameEQ = name + "=";
+      let ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+  }
 
-    function handleCookieConsent(accepted) {
-        if (accepted) {
-            setCookie(cookieName, "accepted", 30);
-            document.getElementById("cookiePopup").classList.remove("active");
-            document.getElementById("cookieOverlay").classList.remove("active");
-        } else {
-            alert("Vous devez accepter les cookies pour utiliser ce site. Vous allez être redirigé.");
-            window.location.href = "Client/logout.php"; 
-        }
-    }
+  // Gestion du consentement de l'utilisateur
+  function handleCookieConsent(type) {
+      // L'utilisateur peut choisir "all" (tous les cookies) ou "essential" (essentiels uniquement)
+      if (type === 'all') {
+          // On enregistre le choix pour 1 an
+          setCookie(cookieName, "all", 365);
+          console.log("✅ Tous les cookies acceptés");
+      } else if (type === 'essential') {
+          // Même avec ce choix, on enregistre la préférence
+          setCookie(cookieName, "essential", 365);
+          console.log("✅ Cookies essentiels uniquement");
+      }
+      
+      // Dans les deux cas, on ferme la bannière - l'utilisateur peut continuer
+      document.getElementById("cookiePopup").classList.remove("active");
+      document.getElementById("cookieOverlay").classList.remove("active");
+  }
 
-    window.addEventListener("load", function() {
-        const popup = document.getElementById("cookiePopup");
-        const overlay = document.getElementById("cookieOverlay");
+  // Au chargement de la page, on vérifie si l'utilisateur a déjà fait son choix
+  window.addEventListener("load", function() {
+      const popup = document.getElementById("cookiePopup");
+      const overlay = document.getElementById("cookieOverlay");
 
-        if (popup && !getCookie(cookieName)) {
-            setTimeout(() => {
-                popup.classList.add("active");
-                overlay.classList.add("active");
-            }, 500);
-        }
-    });
+      // Si la bannière existe ET que l'utilisateur n'a pas encore choisi
+      if (popup && !getCookie(cookieName)) {
+          // Petit délai de 500ms pour pas que ça apparaisse trop brutalement
+          setTimeout(() => {
+              popup.classList.add("active");
+              overlay.classList.add("active");
+          }, 500);
+      }
+  });
 
-    // --- Gardez votre fonction de filtrage en dessous ---
-    function filterProducts() {
-      const category = document.getElementById("categorie").value;
-      const searchTerm = document.getElementById("searchBar").value.trim();
-      const prixRange = document.getElementById("prixFilter").value;
-
-      let url = "recherche.php?";
-      if (category) url += "categorie=" + encodeURIComponent(category) + "&";
-      if (searchTerm) url += "query=" + encodeURIComponent(searchTerm) + "&";
-      if (prixRange) url += "prix=" + encodeURIComponent(prixRange);
-
-      fetch(url)
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById("section2").innerHTML = data;
-        })
-        .catch(error => console.error('Erreur de filtrage:', error));
-    }
-
-    function filterProducts() {
-      const category = document.getElementById("categorie").value;
-      const searchTerm = document.getElementById("searchBar").value.trim();
-      const prixRange = document.getElementById("prixFilter").value;
+  // Fonction de filtrage des produits (conservée de l'ancien code)
+  function filterProducts() {
+      const category = document.getElementById("categorie") ? document.getElementById("categorie").value : "";
+      const searchTerm = document.getElementById("searchBar") ? document.getElementById("searchBar").value.trim() : "";
+      const prixRange = document.getElementById("prixFilter") ? document.getElementById("prixFilter").value : "";
 
       let url = "recherche.php?";
       if (category) url += "categorie=" + encodeURIComponent(category) + "&";
       if (searchTerm) url += "query=" + encodeURIComponent(searchTerm) + "&";
       if (prixRange) url += "prix=" + encodeURIComponent(prixRange);
 
+      // Appel AJAX pour récupérer les produits filtrés
       fetch(url)
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById("section2").innerHTML = data;
-        })
-        .catch(error => console.error('Erreur de filtrage:', error));
-    }
+          .then(response => response.text())
+          .then(data => {
+              const section = document.getElementById("section2");
+              if (section) {
+                  section.innerHTML = data;
+              }
+          })
+          .catch(error => console.error('Erreur lors du filtrage:', error));
+  }
 
-    document.getElementById("searchBar").addEventListener("keyup", function(event) {
-        if (event.key === "Enter") {
-            filterProducts();
-        }
-    });
+  // Si la barre de recherche existe, on écoute la touche Entrée
+  const searchBar = document.getElementById("searchBar");
+  if (searchBar) {
+      searchBar.addEventListener("keyup", function(event) {
+          if (event.key === "Enter") {
+              filterProducts();
+          }
+      });
+  }
 </script>
 </body>
 </html>
