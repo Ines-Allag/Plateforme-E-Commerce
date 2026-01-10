@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// STEP 1: Check if admin is logged in
+// Checking if admin is logged in
 if (!isset($_SESSION['nom_utilisateur']) || $_SESSION['role'] !== 'admin') {
     header("Location: index.php?error=Accès non autorisé");
     exit();
@@ -9,7 +9,7 @@ if (!isset($_SESSION['nom_utilisateur']) || $_SESSION['role'] !== 'admin') {
 
 include('../config.php');
 
-// STEP 2: Handle DELETE action
+// Handling DELETE action
 if (isset($_GET['delete_id'])) {
     $delete_id = intval($_GET['delete_id']);
     
@@ -43,33 +43,33 @@ if (isset($_GET['delete_id'])) {
     }
 }
 
-// STEP 3: Get search and filter parameters from URL
+// Geting search and filter parameters from URL
 $search = isset($_GET['search']) ? mysqli_real_escape_string($con, trim($_GET['search'])) : '';
 $category_filter = isset($_GET['category']) ? mysqli_real_escape_string($con, $_GET['category']) : '';
 
-// STEP 4: Build SQL query with filters
+// SQL query with filters
 $query = "SELECT * FROM produits WHERE 1=1";
 
-// Add search condition
+
 if (!empty($search)) {
     $query .= " AND nom LIKE '%$search%'";
 }
 
-// Add category filter
+
 if (!empty($category_filter)) {
     $query .= " AND categorie = '$category_filter'";
 }
 
-// Order by: low stock first, then by name
+
 $query .= " ORDER BY quantite_stock ASC, nom ASC";
 
 $result = mysqli_query($con, $query);
 
-// STEP 5: Get all unique categories for the filter dropdown
+// categories for the filter dropdown
 $categories_query = "SELECT DISTINCT categorie FROM produits WHERE categorie IS NOT NULL ORDER BY categorie";
 $categories_result = mysqli_query($con, $categories_query);
 
-// STEP 6: Calculate statistics
+// Calculate statistics
 $stats_query = "SELECT 
     COUNT(*) as total_products,
     SUM(quantite_stock) as total_stock,
@@ -100,7 +100,7 @@ $stats = mysqli_fetch_assoc($stats_result);
       min-height: 100vh;
     }
 
-    /* Sidebar Navigation - Same as Dashboard */
+    /* Sidebar */
     .sidebar {
       width: 280px;
       background-color: #3B000B;
@@ -186,7 +186,7 @@ $stats = mysqli_fetch_assoc($stats_result);
       text-align: center;
     }
 
-    /* Main Content */
+
     .main-content {
       flex: 1;
       margin-left: 280px;
@@ -346,7 +346,7 @@ $stats = mysqli_fetch_assoc($stats_result);
       border-bottom: none;
     }
 
-    /* Product image thumbnail */
+    /* Product image  */
     .product-image {
       width: 80px;
       height: 80px;
@@ -392,7 +392,7 @@ $stats = mysqli_fetch_assoc($stats_result);
       color: var(--foreground);
     }
 
-    /* Low stock warning */
+    /* Low stock */
     .low-stock {
       color: var(--destructive);
     }
@@ -582,7 +582,7 @@ $stats = mysqli_fetch_assoc($stats_result);
 </head>
 <body>
   <div class="dashboard-container">
-    <!-- Sidebar -->
+
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
@@ -628,14 +628,14 @@ $stats = mysqli_fetch_assoc($stats_result);
       </nav>
     </aside>
 
-    <!-- Main Content -->
+
     <main class="main-content">
       <div class="page-header">
         <h1><i class="fas fa-boxes"></i> Gestion du Stock</h1>
         <p>Gérez tous vos produits en un seul endroit</p>
       </div>
 
-      <!-- Alerts -->
+
       <?php if (isset($_GET['success'])): ?>
         <div class="alert alert-success">
           <i class="fas fa-check-circle"></i>
@@ -652,7 +652,7 @@ $stats = mysqli_fetch_assoc($stats_result);
 
 
 
-      <!-- Toolbar -->
+
       <div class="toolbar">
         <form method="GET" action="stock_management.php" class="search-box">
           <i class="fas fa-search"></i>
@@ -688,7 +688,7 @@ $stats = mysqli_fetch_assoc($stats_result);
         </a>
       </div>
 
-      <!-- Products Table -->
+
       <?php if (mysqli_num_rows($result) > 0): ?>
         <div class="products-table">
           <div class="table-header">
@@ -702,7 +702,7 @@ $stats = mysqli_fetch_assoc($stats_result);
 
           <?php while ($product = mysqli_fetch_assoc($result)): ?>
             <div class="product-row">
-              <!-- Product Image -->
+
               <div class="product-image">
                 <?php if (!empty($product['image1'])): ?>
                   <img src="../<?php echo htmlspecialchars($product['image1']); ?>" 
@@ -712,24 +712,23 @@ $stats = mysqli_fetch_assoc($stats_result);
                 <?php endif; ?>
               </div>
 
-              <!-- Product Name -->
+
               <div class="product-name">
                 <?php echo htmlspecialchars($product['nom']); ?>
               </div>
 
-              <!-- Category -->
               <div>
                 <span class="product-category">
                   <?php echo htmlspecialchars($product['categorie'] ?? 'Non catégorisé'); ?>
                 </span>
               </div>
 
-              <!-- Price -->
+
               <div class="product-price">
                 <?php echo number_format($product['prix'], 2); ?> DZD
               </div>
 
-              <!-- Stock -->
+
               <div class="product-stock <?php echo $product['quantite_stock'] < 5 ? 'low-stock' : ''; ?>">
                 <?php echo $product['quantite_stock']; ?>
                 <?php if ($product['quantite_stock'] < 5): ?>
@@ -737,7 +736,7 @@ $stats = mysqli_fetch_assoc($stats_result);
                 <?php endif; ?>
               </div>
 
-              <!-- Actions -->
+
               <div class="product-actions">
                 <a href="Gstock.php?edit_id=<?php echo $product['id']; ?>" 
                    class="btn btn-secondary btn-sm">
@@ -754,7 +753,7 @@ $stats = mysqli_fetch_assoc($stats_result);
         </div>
 
       <?php else: ?>
-        <!-- Empty State -->
+
         <div class="empty-state">
           <i class="fas fa-box-open"></i>
           <h3>Aucun produit trouvé</h3>
@@ -766,7 +765,7 @@ $stats = mysqli_fetch_assoc($stats_result);
             <?php endif; ?>
           </p>
           <a href="Gstock.php" class="btn btn-primary" style="margin-top: 1.5rem;">
-            <i class="fas fa-plus"></i> Ajouter un produit
+          Ajouter un produit
           </a>
         </div>
       <?php endif; ?>

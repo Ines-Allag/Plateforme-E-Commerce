@@ -164,7 +164,7 @@ $stats = mysqli_fetch_assoc($stats_result);
       text-align: center;
     }
 
-    /* Main Content */
+
     .main-content {
       flex: 1;
       margin-left: 280px;
@@ -213,7 +213,7 @@ $stats = mysqli_fetch_assoc($stats_result);
       border: 1px solid #ef4444;
     }
 
-    /* Stats Grid */
+    /* Stats */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -574,7 +574,7 @@ $stats = mysqli_fetch_assoc($stats_result);
 </head>
 <body>
   <div class="dashboard-container">
-    <!-- Sidebar -->
+
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
@@ -620,7 +620,7 @@ $stats = mysqli_fetch_assoc($stats_result);
       </nav>
     </aside>
 
-    <!-- Main Content -->
+
     <main class="main-content">
       <div class="page-header">
         <h1><i class="fas fa-shopping-cart"></i> Gestion des Commandes</h1>
@@ -639,7 +639,7 @@ $stats = mysqli_fetch_assoc($stats_result);
         </div>
       <?php endif; ?>
 
-      <!-- Stats -->
+
       <div class="stats-grid">
         <a href="orders_management.php" class="stat-card stat-all <?php echo empty($filter_status) ? 'active' : ''; ?>">
           <div class="stat-number"><?php echo $stats['total']; ?></div>
@@ -667,7 +667,7 @@ $stats = mysqli_fetch_assoc($stats_result);
         </a>
       </div>
 
-      <!-- Orders List -->
+
       <?php if (mysqli_num_rows($result) > 0): ?>
         <div class="orders-list">
           <?php while ($order = mysqli_fetch_assoc($result)): ?>
@@ -695,7 +695,7 @@ $stats = mysqli_fetch_assoc($stats_result);
                   <p><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($order['adresse_livraison']); ?></p>
                 </div>
 
-                <!-- Order Details -->
+
                 <div class="order-details">
                   <div class="detail-row">
                     <span class="detail-label">Articles</span>
@@ -708,7 +708,7 @@ $stats = mysqli_fetch_assoc($stats_result);
                 </div>
               </div>
 
-              <!-- Actions -->
+
               <div class="order-actions">
                 <form method="POST" action="orders_management.php" style="flex: 1; display: flex; gap: 1rem; align-items: center;">
                   <input type="hidden" name="commande_id" value="<?php echo $order['id']; ?>">

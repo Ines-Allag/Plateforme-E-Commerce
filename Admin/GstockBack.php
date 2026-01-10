@@ -28,7 +28,7 @@ function uploadImage($file, $index) {
         return ['error' => "L'image $index est trop volumineuse (max 5MB)"];
     }
     
-    // 🎯 CORRECTION : Upload directement dans imgs/
+    // CORRECTION : Upload directement dans imgs/
     $upload_dir = "../imgs/";
     
     // Créer UNIQUEMENT le dossier imgs/ s'il n'existe pas (PAS produits/)
@@ -42,7 +42,7 @@ function uploadImage($file, $index) {
     
     // Déplacer le fichier
     if (move_uploaded_file($file['tmp_name'], $destination)) {
-        // ✅ Retourner le chemin RELATIF pour la base de données
+        // Retourner le chemin RELATIF pour la base de données
         return "imgs/" . $unique_name;
     } else {
         return ['error' => "Erreur lors de l'upload de l'image $index"];

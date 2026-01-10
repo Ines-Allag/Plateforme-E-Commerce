@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Check if admin is logged in
+// Checking if admin is logged in
 if (!isset($_SESSION['nom_utilisateur']) || $_SESSION['role'] !== 'admin') {
     header("Location: index.php?error=Accès non autorisé");
     exit();
@@ -9,7 +9,7 @@ if (!isset($_SESSION['nom_utilisateur']) || $_SESSION['role'] !== 'admin') {
 
 include('../config.php');
 
-// Get comprehensive statistics
+// statistics
 $stats_query = "SELECT 
     (SELECT COUNT(*) FROM produits) as total_products,
     (SELECT SUM(quantite_stock) FROM produits) as total_stock,
@@ -24,7 +24,7 @@ $stats_query = "SELECT
 $stats_result = mysqli_query($con, $stats_query);
 $stats = mysqli_fetch_assoc($stats_result);
 
-// Get recent orders
+// recent orders
 $recent_orders_query = "SELECT c.*, u.nom_utilisateur 
                         FROM commandes c 
                         JOIN utilisateurs u ON c.utilisateur_id = u.id 
@@ -32,11 +32,11 @@ $recent_orders_query = "SELECT c.*, u.nom_utilisateur
                         LIMIT 5";
 $recent_orders = mysqli_query($con, $recent_orders_query);
 
-// Get low stock products
+// low stock products
 $low_stock_query = "SELECT * FROM produits WHERE quantite_stock < 5 ORDER BY quantite_stock ASC LIMIT 5";
 $low_stock_products = mysqli_query($con, $low_stock_query);
 
-// Get top selling products (based on order details)
+// top selling products (based on order details)
 $top_products_query = "SELECT p.*, COALESCE(SUM(dc.quantite), 0) as total_sold 
                        FROM produits p 
                        LEFT JOIN details_commande dc ON p.id = dc.produit_id 
@@ -67,7 +67,7 @@ $top_products = mysqli_query($con, $top_products_query);
       min-height: 100vh;
     }
 
-    /* Sidebar Navigation */
+    /* Sidebar */
     .sidebar {
       width: 280px;
       background-color: #3B000B;
@@ -153,7 +153,7 @@ $top_products = mysqli_query($con, $top_products_query);
       text-align: center;
     }
 
-    /* Main Content */
+
     .main-content {
       flex: 1;
       margin-left: 280px;
@@ -180,7 +180,7 @@ $top_products = mysqli_query($con, $top_products_query);
       font-size: 1.125rem;
     }
 
-    /* Stats Grid */
+    /* Stats */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -190,7 +190,6 @@ $top_products = mysqli_query($con, $top_products_query);
 
     .stat-card {
       background-color: var(--card);
-      /*border: 0.5px solid var(--border);*/
       border-radius: var(--radius);
       padding: 2rem;
       position: relative;
@@ -271,7 +270,6 @@ $top_products = mysqli_query($con, $top_products_query);
     /* Dashboard Sections */
     .dashboard-section {
       background-color: var(--card);
-      /*border: 0.8px solid var(--border);*/
       border-radius: var(--radius);
       padding: 2rem;
       margin-bottom: 2rem;
@@ -284,7 +282,6 @@ $top_products = mysqli_query($con, $top_products_query);
       align-items: center;
       margin-bottom: 2rem;
       padding-bottom: 1.5rem;
-      /*border-bottom: 1px solid var(--border);*/
     }
 
     .section-title {
@@ -404,7 +401,6 @@ $top_products = mysqli_query($con, $top_products_query);
       border-radius: var(--radius);
       overflow: hidden;
       transition: all 0.3s ease;
-      /*box-shadow: var(--shadow-sm);*/
     }
 
     .product-card:hover {
@@ -604,7 +600,7 @@ $top_products = mysqli_query($con, $top_products_query);
 </head>
 <body>
   <div class="dashboard-container">
-    <!-- Sidebar -->
+
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
@@ -650,14 +646,14 @@ $top_products = mysqli_query($con, $top_products_query);
       </nav>
     </aside>
 
-    <!-- Main Content -->
+
     <main class="main-content">
       <div class="dashboard-header">
         <h1>Tableau de Bord</h1>
         <p>Vue d'ensemble de votre boutique Atelier</p>
       </div>
 
-      <!-- Stats Grid -->
+
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-header">
@@ -733,7 +729,7 @@ $top_products = mysqli_query($con, $top_products_query);
       </div>
 
       <div class="two-column">
-        <!-- Recent Orders -->
+
         <div class="dashboard-section">
           <div class="section-header">
             <h2 class="section-title">Commandes Récentes</h2>
@@ -767,7 +763,7 @@ $top_products = mysqli_query($con, $top_products_query);
           </div>
         </div>
 
-        <!-- Low Stock Products -->
+
         <div class="dashboard-section">
           <div class="section-header">
             <h2 class="section-title">Stock Faible</h2>
@@ -804,7 +800,7 @@ $top_products = mysqli_query($con, $top_products_query);
         </div>
       </div>
 
-      <!-- Top Products -->
+
       <div class="dashboard-section">
         <div class="section-header">
           <h2 class="section-title">Produits Populaires</h2>
